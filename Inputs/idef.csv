@@ -44,7 +44,7 @@ jmpaguasegura_ch,wash,pct,"aguafuente_ch >= 1 & aguafuente_ch <= 7 &
 jmpconaguasegura_ch,wash,pct,"(aguafconsumo_ch >= 1 & aguafconsumo_ch <= 7) & 
                                     (aguadisp1_ch == 1 | (aguadisp1_ch == 9 & 
                                                                  (aguadisp2_ch == 2 | aguadisp2_ch == 3))) &
-                                    (aguadist_ch == 1 | aguadist_ch == 2)",jefe_ci==1,"area,ethnicity,migration,isoalpha3,year","disability,migration quintile,migration ethnicity,migration disability,quintile ethnicity,area,quintile quintile,ethnicity ethnicity,disability migration,area"
+                                    (aguadist_ch == 1 | aguadist_ch == 2) & jefe_ci==1",jefe_ci==1,"area,ethnicity,migration,isoalpha3,year","disability,migration quintile,migration ethnicity,migration disability,quintile ethnicity,area,quintile quintile,ethnicity ethnicity,disability migration,area"
 nosanairelibre_ch,wash,pct,sinbano_ch == 2 & (jefe_ci==1),jefe_ci==1,"area,ethnicity,migration,isoalpha3,year","disability,migration quintile,migration ethnicity,migration disability,quintile ethnicity,area,quintile quintile,ethnicity ethnicity,disability migration,area"
 nosandesc_ch,wash,pct,sinbano_ch == 3 & (jefe_ci==1),jefe_ci==1,"area,ethnicity,migration,isoalpha3,year","disability,migration quintile,migration ethnicity,migration disability,quintile ethnicity,area,quintile quintile,ethnicity ethnicity,disability migration,area"
 nosanvecino_ch,wash,pct,sinbano_ch == 1 & (jefe_ci==1),jefe_ci==1,"area,ethnicity,migration,isoalpha3,year","disability,migration quintile,migration ethnicity,migration disability,quintile ethnicity,area,quintile quintile,ethnicity ethnicity,disability migration,area"
