@@ -1,8 +1,8 @@
 # to do make it generalized so that you only have to specity country, type and year.
 # Path of the data
 
-pais<-"SLV"
-anio<-"2014"
+pais<-"JAM"
+anio<-"2003"
 tipo<-"encuestas"
 
 source("scl_indicators.R")
@@ -13,3 +13,4 @@ if (tipo == "encuestas") {
 if (tipo=="censos"){
   
 }
+
