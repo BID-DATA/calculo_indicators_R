@@ -23,14 +23,14 @@ if (tipo == "censos") {
   data_soc <- data_filt %>% group_by(geolev1) %>%partition(cluster) %>% 
     mutate(jefa_ci = dplyr::if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
            ylm_ci=as.double(ylm_ci), ynlm_ci=as.double(ynlm_ci),
-           urbano_ci = case_when(zona_c == 1 ~ 1, 
+           urbano_ci = dplyr::case_when(zona_c == 1 ~ 1, 
                                  is.na(zona_c) ~NA_real_, 
                                  TRUE ~ 0), 
            pob_sfd = dplyr::if_else(sexo_ci == 2 | afroind_ci == 1 | afroind_ci == 2 | dis_ci == 1, 1, 0),  # variable requested for SFD - GDI
            pob18_ci = as.numeric(edad_ci <= 18),
            pob65_ci = as.numeric(edad_ci >= 65),
            single_member = miembros_ci == 1,
-           age_scl = case_when(edad_ci>=0 & edad_ci<5 ~"00_04",
+           age_scl = dplyr::case_when(edad_ci>=0 & edad_ci<5 ~"00_04",
                                edad_ci>=5 & edad_ci<15 ~"05_14",
                                edad_ci>=15 & edad_ci<25 ~"15_24",
                                edad_ci>=25 & edad_ci<65 ~"25_64",
@@ -60,19 +60,19 @@ if (tipo == "censos") {
       pc_ytot_ch = dplyr::if_else(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
       pc_ytot_ch = dplyr::if_else(pc_ytot_ch <= 0, NA, pc_ytot_ch),
       # Define area and sex based on zona_c and sexo_ci respectively, 
-      income_category = case_when(
+      income_category = dplyr::case_when(
         (pc_ytot_ch < lp31_ci ~ "extreme"),  # extreme poverty
         (pc_ytot_ch >= lp31_ci) & (pc_ytot_ch < lp5_ci) ~ "poverty",  # poverty
         (pc_ytot_ch >= lp5_ci) & (pc_ytot_ch < lp31_ci*4) ~ "vulnerable",  # vulnerable
         (pc_ytot_ch >= lp31_ci*4) & (pc_ytot_ch < lp31_ci*20) ~ "middle",  # middle class
         (pc_ytot_ch >= lp31_ci*20) ~ "rich", 
         TRUE ~ NA_character_),  # rich,
-      area = case_when(
+      area = dplyr::case_when(
         zona_c == 1 ~ "urban", 
         zona_c == 0 ~ "rural", 
         TRUE ~ NA_character_
       ),
-      sex = case_when(
+      sex = dplyr::case_when(
         sexo_ci == 2 ~ "women",
         sexo_ci == 1 ~ "men", 
         TRUE ~ NA_character_
@@ -135,7 +135,7 @@ if (tipo == "encuestas") {
            ytot_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci, ynlm_ci, ynlnm_ci), na.rm = TRUE)),
            ytot_ci = dplyr::if_else(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci),
            yallsr18 = dplyr::if_else(edad_ci >= 18, ytot_ci, NA_real_),
-           age_scl = case_when(edad_ci>=0 & edad_ci<5 ~"00_04",
+           age_scl = dplyr::case_when(edad_ci>=0 & edad_ci<5 ~"00_04",
                                edad_ci>=5 & edad_ci<15 ~"05_14",
                                edad_ci>=15 & edad_ci<25 ~"15_24",
                                edad_ci>=25 & edad_ci<65 ~"25_64",
@@ -162,19 +162,19 @@ if (tipo == "encuestas") {
       pc_ytot_ch = dplyr::if_else(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
       pc_ytot_ch = dplyr::if_else(pc_ytot_ch <= 0, NA, pc_ytot_ch),
       # Define area and sex based on zona_c and sexo_ci respectively, 
-      income_category = case_when(
+      income_category = dplyr::case_when(
         (pc_ytot_ch < lp31_ci ~ "extreme"),  # extreme poverty
         (pc_ytot_ch >= lp31_ci) & (pc_ytot_ch < lp5_ci) ~ "poverty",  # poverty
         (pc_ytot_ch >= lp5_ci) & (pc_ytot_ch < lp31_ci*4) ~ "vulnerable",  # vulnerable
         (pc_ytot_ch >= lp31_ci*4) & (pc_ytot_ch < lp31_ci*20) ~ "middle",  # middle class
         (pc_ytot_ch >= lp31_ci*20) ~ "rich", 
         TRUE ~ NA_character_),  # rich,
-      area = case_when(
+      area = dplyr::case_when(
         zona_c == 1 ~ "urban", 
         zona_c == 0 ~ "rural", 
         TRUE ~ NA_character_
       ),
-      sex = case_when(
+      sex = dplyr::case_when(
         sexo_ci == 2 ~ "women",
         sexo_ci == 1 ~ "men", 
         TRUE ~ NA_character_
