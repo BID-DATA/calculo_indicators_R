@@ -21,12 +21,12 @@ if (tipo == "censos") {
   
   
   data_soc <- data_filt %>% group_by(geolev1) %>%partition(cluster) %>% 
-    mutate(jefa_ci = if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
+    mutate(jefa_ci = dplyr::if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
            ylm_ci=as.double(ylm_ci), ynlm_ci=as.double(ynlm_ci),
            urbano_ci = case_when(zona_c == 1 ~ 1, 
                                  is.na(zona_c) ~NA_real_, 
                                  TRUE ~ 0), 
-           pob_sfd = if_else(sexo_ci == 2 | afroind_ci == 1 | afroind_ci == 2 | dis_ci == 1, 1, 0),  # variable requested for SFD - GDI
+           pob_sfd = dplyr::if_else(sexo_ci == 2 | afroind_ci == 1 | afroind_ci == 2 | dis_ci == 1, 1, 0),  # variable requested for SFD - GDI
            pob18_ci = as.numeric(edad_ci <= 18),
            pob65_ci = as.numeric(edad_ci >= 65),
            single_member = miembros_ci == 1,
@@ -37,28 +37,28 @@ if (tipo == "censos") {
                                edad_ci>=65 & edad_ci<99 ~"65+", 
                                TRUE ~NA_character_)) %>%
     mutate(ytot_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci, ynlm_ci, ynlnm_ci), na.rm=TRUE)),
-           ytot_ci = ifelse(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci),
-           yallsr18 = ifelse(edad_ci>=18, ytot_ci, NA)) %>%
+           ytot_ci = dplyr::if_else(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci),
+           yallsr18 = dplyr::if_else(edad_ci>=18, ytot_ci, NA)) %>%
     group_by(anio_c, pais_c, idh_ch) %>%
-    mutate(ytot_ch = ifelse(single_member, sum(ytot_ci,na.rm=TRUE), NA),
+    mutate(ytot_ch = dplyr::if_else(single_member, sum(ytot_ci,na.rm=TRUE), NA),
            ytot_ch = pmax(0, ytot_ch),
-           hhyallsr = ifelse(single_member, sum(yallsr18,na.rm=TRUE), NA),
+           hhyallsr = dplyr::if_else(single_member, sum(yallsr18,na.rm=TRUE), NA),
            hhyallsr = pmax(0, hhyallsr),
            ywomen = sum(yallsr18[sexo_ci == 2], na.rm = TRUE),
            hhywomen = max(ywomen, na.rm = TRUE),
-           jefa_ch = if_else(jefe_ci == 1, sum(jefa_ci, na.rm = TRUE), 0),
+           jefa_ch = dplyr::if_else(jefe_ci == 1, sum(jefa_ci, na.rm = TRUE), 0),
            miembro6_ch = as.numeric(sum(edad_ci < 6 & relacion_ci > 0 & relacion_ci <= 5) > 0),
            miembro65_ch = as.numeric(sum(edad_ci >= 65 & relacion_ci > 0 & relacion_ci <= 5) > 0),
            miembro6y16_ch = as.numeric(sum(edad_ci >=6 & edad_ci <=16  & relacion_ci > 0 & relacion_ci <= 5) > 0),
            shareylmfem_ch = hhywomen / hhyallsr,
-           perceptor_ci = if_else(ytot_ci > 0, sum(miembros_ci, na.rm = TRUE), NA_real_),
+           perceptor_ci = dplyr::if_else(ytot_ci > 0, sum(miembros_ci, na.rm = TRUE), NA_real_),
            perceptor_ch = suppressWarnings(max(perceptor_ci, na.rm = TRUE))) %>%
     ungroup() %>%
     # Mutate to compute additional variables
     mutate(
       # Income per capita definition 
-      pc_ytot_ch = ifelse(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
-      pc_ytot_ch = ifelse(pc_ytot_ch <= 0, NA, pc_ytot_ch),
+      pc_ytot_ch = dplyr::if_else(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
+      pc_ytot_ch = dplyr::if_else(pc_ytot_ch <= 0, NA, pc_ytot_ch),
       # Define area and sex based on zona_c and sexo_ci respectively, 
       income_category = case_when(
         (pc_ytot_ch < lp31_ci ~ "extreme"),  # extreme poverty
@@ -78,9 +78,9 @@ if (tipo == "censos") {
         TRUE ~ NA_character_
       ),
       # Calculate hhfem_ch
-      hhfem_ch = ifelse(hhywomen >= .5, 1, ifelse(is.na(yallsr18), NA, 0)),
+      hhfem_ch = dplyr::if_else(hhywomen >= .5, 1, dplyr::if_else(is.na(yallsr18), NA, 0)),
       # remesas
-      #indexrem = ifelse(jefe_ci == 1 & !is.na(remesas_ch) & remesas_ch > 0, 1, NA),
+      #indexrem = dplyr::if_else(jefe_ci == 1 & !is.na(remesas_ch) & remesas_ch > 0, 1, NA),
       #ylmprixh = ylmpri_ci / (horaspri_ci * 4.34),
       #vivienda 
       hacinamiento_ch = nmiembros_ch / cuartos_ch,
@@ -125,16 +125,16 @@ if (tipo == "encuestas") {
   
   
   data_soc <- data_filt %>%  
-    mutate(jefa_ci = if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
+    mutate(jefa_ci = dplyr::if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
            ylm_ci = as.double(ylm_ci), 
            ynlm_ci = as.double(ynlm_ci),
-           pob_sfd = if_else(sexo_ci == 2 | afroind_ci == 1 | afroind_ci == 2 | dis_ci == 1, 1, 0),
+           pob_sfd = dplyr::if_else(sexo_ci == 2 | afroind_ci == 1 | afroind_ci == 2 | dis_ci == 1, 1, 0),
            pob18_ci = as.numeric(edad_ci <= 18),
            pob65_ci = as.numeric(edad_ci >= 65),
            miembros_ci = as.numeric(miembros_ci == 1),
            ytot_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci, ynlm_ci, ynlnm_ci), na.rm = TRUE)),
-           ytot_ci = ifelse(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci),
-           yallsr18 = if_else(edad_ci >= 18, ytot_ci, NA_real_),
+           ytot_ci = dplyr::if_else(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci),
+           yallsr18 = dplyr::if_else(edad_ci >= 18, ytot_ci, NA_real_),
            age_scl = case_when(edad_ci>=0 & edad_ci<5 ~"00_04",
                                edad_ci>=5 & edad_ci<15 ~"05_14",
                                edad_ci>=15 & edad_ci<25 ~"15_24",
@@ -142,25 +142,25 @@ if (tipo == "encuestas") {
                                edad_ci>=65 & edad_ci<99 ~"65+", 
                                TRUE ~NA_character_)) %>%
     group_by(idh_ch) %>%
-    mutate(ytot_ch = if_else(miembros_ci == 1, sum(ytot_ci, na.rm = TRUE), NA_real_),
+    mutate(ytot_ch = dplyr::if_else(miembros_ci == 1, sum(ytot_ci, na.rm = TRUE), NA_real_),
            ytot_ch = pmax(0, ytot_ch),
-           hhyallsr = if_else(miembros_ci == 1, sum(yallsr18, na.rm = TRUE), NA_real_),
+           hhyallsr = dplyr::if_else(miembros_ci == 1, sum(yallsr18, na.rm = TRUE), NA_real_),
            hhyallsr = pmax(0, hhyallsr),
            ywomen = sum(yallsr18[sexo_ci == 2], na.rm = TRUE),
            hhywomen = max(ywomen, na.rm = TRUE),
            shareylmfem_ch = hhywomen / hhyallsr,
-           jefa_ch = if_else(jefe_ci == 1, sum(jefa_ci, na.rm = TRUE), 0),
+           jefa_ch = dplyr::if_else(jefe_ci == 1, sum(jefa_ci, na.rm = TRUE), 0),
            miembro6_ch = as.numeric(sum(edad_ci < 6 & relacion_ci > 0 & relacion_ci <= 5) > 0),
            miembro65_ch = as.numeric(sum(edad_ci >= 65 & relacion_ci > 0 & relacion_ci <= 5) > 0),
            miembro6y16_ch = as.numeric(sum(edad_ci >=6 & edad_ci <=16  & relacion_ci > 0 & relacion_ci <= 5) > 0),
-           perceptor_ci = if_else(ytot_ci > 0, sum(miembros_ci, na.rm = TRUE), NA_real_),
+           perceptor_ci = dplyr::if_else(ytot_ci > 0, sum(miembros_ci, na.rm = TRUE), NA_real_),
            perceptor_ch = suppressWarnings(max(perceptor_ci, na.rm = TRUE))) %>%
     ungroup() %>% 
     # Mutate to compute additional variables
     mutate(
       # Income per capita definition 
-      pc_ytot_ch = ifelse(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
-      pc_ytot_ch = ifelse(pc_ytot_ch <= 0, NA, pc_ytot_ch),
+      pc_ytot_ch = dplyr::if_else(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
+      pc_ytot_ch = dplyr::if_else(pc_ytot_ch <= 0, NA, pc_ytot_ch),
       # Define area and sex based on zona_c and sexo_ci respectively, 
       income_category = case_when(
         (pc_ytot_ch < lp31_ci ~ "extreme"),  # extreme poverty
@@ -180,9 +180,9 @@ if (tipo == "encuestas") {
         TRUE ~ NA_character_
       ),
       # Calculate hhfem_ch
-      hhfem_ch = ifelse(hhywomen >= .5, 1, ifelse(is.na(yallsr18), NA, 0)),
+      hhfem_ch = dplyr::if_else(hhywomen >= .5, 1, dplyr::if_else(is.na(yallsr18), NA, 0)),
       # remesas
-      indexrem = ifelse(jefe_ci == 1 & !is.na(remesas_ch) & remesas_ch > 0, 1, NA),
+      indexrem = dplyr::if_else(jefe_ci == 1 & !is.na(remesas_ch) & remesas_ch > 0, 1, NA),
       ylmprixh = ylmpri_ci / (horaspri_ci * 4.34),
       #vivienda 
       hacinamiento_ch = nmiembros_ch / cuartos_ch,

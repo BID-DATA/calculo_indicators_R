@@ -78,16 +78,16 @@ if (tipo == "censos") {
   
   # Make sure the joining columns form a unique identifier in the right datasets
   data_lmk <- data_lmk %>% 
-    distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
+    dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
   data_edu <- data_edu %>% 
-    distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
+    dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
   data_soc <- data_soc %>% 
-    distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
+    dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
   data_gdi <- data_gdi %>% 
-    distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
+    dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
   
   # Now join the datasets
@@ -113,16 +113,16 @@ if (tipo == "encuestas") {
   
   # Make sure the joining columns form a unique identifier in the right datasets
   data_lmk <- data_lmk %>% 
-    distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","ine01",
+    dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","ine01",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
   data_edu <- data_edu %>% 
-    distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","ine01",
+    dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","ine01",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
   data_soc <- data_soc %>% 
-    distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","ine01",
+    dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","ine01",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
   data_gdi <- data_gdi %>% 
-    distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","ine01",
+    dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","ine01",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
   
   # Now join the datasets
