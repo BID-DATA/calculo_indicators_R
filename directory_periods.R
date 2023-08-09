@@ -40,7 +40,7 @@ return(base)
 
 if (tipo == "censos"){
 
-base <- paste("C:/Users/MARIAREY/OneDrive - Inter-American Development Bank Group/Documents/Data Governance - SCL/Censos/clean/",pais,"/", pais,"_",anio, "_censusBID.dta",sep = "")  
-  
+base <- paste("C:/Users/DCOR/OneDrive - Inter-American Development Bank Group/Documents/Indicadores encuestas de hogares/Indicadores/",pais,"/", pais,"_",anio, "_censusBID.dta",sep = "")  
+
 }
 }
