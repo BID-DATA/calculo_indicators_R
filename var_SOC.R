@@ -93,7 +93,7 @@ if (tipo == "censos") {
   # creating an if to see if pc_ytot_ch has a value%>% 
   if (length(unique(data_filt$pc_ytot_ch))>5){ 
     data_filt <- data_filt %>%
-      arrange(pc_ytot_ch) %>%
+      dplyr::arrange(pc_ytot_ch) %>%
       mutate(
         quintile = cut(pc_ytot_ch, 
                        breaks = quantile(pc_ytot_ch, 
@@ -195,7 +195,7 @@ if (tipo == "encuestas") {
   
   # Calculate quintiles
   data_filt <- data_filt %>%
-    arrange(pc_ytot_ch) %>%
+    dplyr::arrange(pc_ytot_ch) %>%
     mutate(
       quintile = cut(pc_ytot_ch, 
                      breaks = quantile(pc_ytot_ch, 
