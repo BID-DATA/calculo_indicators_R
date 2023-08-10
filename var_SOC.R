@@ -15,13 +15,15 @@ if (tipo == "censos") {
     mutate(across(where(is_haven_labelled), as.numeric))
   num_cores <- as.integer((detectCores() - 1)/2)  # number of cores to use, often set to one less than the total available
   
-  cluster <- new_cluster(num_cores)
-  cluster_library(cluster, "dplyr")  
-  initial_column_names <- names(data_filt)
+  #cluster <- new_cluster(num_cores)
+  #cluster_library(cluster, "dplyr")  
+  #initial_column_names <- names(data_filt)
   
   
-  data_soc <- data_filt %>% group_by(geolev1) %>%partition(cluster) %>% 
-    mutate(jefa_ci = dplyr::if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
+  data_filt <- data_filt %>% 
+    mutate(isoalpha3 = pais_c,
+           year = anio_c,
+           jefa_ci = dplyr::if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
            ylm_ci=as.double(ylm_ci), ynlm_ci=as.double(ynlm_ci),
            urbano_ci = dplyr::case_when(zona_c == 1 ~ 1, 
                                  is.na(zona_c) ~NA_real_, 
@@ -86,12 +88,11 @@ if (tipo == "censos") {
       hacinamiento_ch = nmiembros_ch / cuartos_ch,
       #demografia dependencia 
       depen_ch = nmiembros_ch / perceptor_ch
-    )%>% 
-    collect()
+    )
 
   # creating an if to see if pc_ytot_ch has a value%>% 
-  if (length(unique(data_soc$pc_ytot_ch))>5){ 
-    data_soc <- data_soc %>%
+  if (length(unique(data_filt$pc_ytot_ch))>5){ 
+    data_filt <- data_filt %>%
       arrange(pc_ytot_ch) %>%
       mutate(
         quintile = cut(pc_ytot_ch, 
@@ -102,16 +103,16 @@ if (tipo == "censos") {
                        labels = c("quintile_1", "quintile_2", "quintile_3", "quintile_4", "quintile_5"))
       )
   } else{
-    data_soc <- data_soc %>% mutate(quintile = NA_character_)
+    data_filt <- data_filt %>% mutate(quintile = NA_character_)
   }    
   # then select only added variables and specific columns
-  new_column_names <- setdiff(names(data_soc), initial_column_names)
+  #new_column_names <- setdiff(names(data_soc), initial_column_names)
   
-  select_column_names <- c(new_column_names, 
-                           "region_BID_c", "pais_c", "geolev1","estrato_ci","area", "zona_c", "relacion_ci", 
-                           "idh_ch", "factor_ch", "factor_ci", "idp_ci")
+  #select_column_names <- c(new_column_names, 
+  #                         "region_BID_c", "pais_c", "geolev1","estrato_ci","area", "zona_c", "relacion_ci", 
+  #                         "idh_ch", "factor_ch", "factor_ci", "idp_ci")
   
-  data_soc <- select(data_soc, all_of(select_column_names))
+  #data_soc <- select(data_soc, all_of(select_column_names))
 }
 
 # 2. Encuestas
@@ -121,11 +122,13 @@ start_time <- Sys.time()
 if (tipo == "encuestas") {
   
   # creating a vector with initial column names
-  initial_column_names <- names(data_filt)
+  #initial_column_names <- names(data_filt)
   
   
-  data_soc <- data_filt %>%  
-    mutate(jefa_ci = dplyr::if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
+  data_filt <- data_filt %>%  
+    mutate(isoalpha3 = pais_c,
+           year = anio_c,
+           jefa_ci = dplyr::if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
            ylm_ci = as.double(ylm_ci), 
            ynlm_ci = as.double(ynlm_ci),
            pob_sfd = dplyr::if_else(sexo_ci == 2 | afroind_ci == 1 | afroind_ci == 2 | dis_ci == 1, 1, 0),
@@ -191,7 +194,7 @@ if (tipo == "encuestas") {
     ) 
   
   # Calculate quintiles
-  data_soc <- data_soc %>%
+  data_filt <- data_filt %>%
     arrange(pc_ytot_ch) %>%
     mutate(
       quintile = cut(pc_ytot_ch, 
@@ -203,18 +206,13 @@ if (tipo == "encuestas") {
     )
   
   # then select only added variables and specific columns
-  new_column_names <- setdiff(names(data_soc), initial_column_names)
+  #new_column_names <- setdiff(names(data_soc), initial_column_names)
   
-  select_column_names <- c(new_column_names, 
-                           "region_BID_c", "pais_c", "ine01","estrato_ci","area", "zona_c", "relacion_ci", 
-                           "idh_ch", "factor_ch", "factor_ci", "idp_ci")
+  #select_column_names <- c(new_column_names, 
+  #                         "region_BID_c", "pais_c", "ine01","estrato_ci","area", "zona_c", "relacion_ci", 
+  #                         "idh_ch", "factor_ch", "factor_ci", "idp_ci")
   
-  data_soc <- select(data_soc, all_of(select_column_names)) 
+  #data_soc <- select(data_soc, all_of(select_column_names)) 
   
 }
 
-
-end_time <- Sys.time()
-
-
-end_time - start_time
