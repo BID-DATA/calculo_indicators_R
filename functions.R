@@ -205,8 +205,8 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   return(data_aux)
 }
 
-calculate_indicators <- function(i, data, indicator_definitions) {
-  
+calculate_indicators <- function(data, indicator_definitions) {
+  for (i in 1:nrow(indicator_definitions)){
   # Extract each component of the current indicator definition
   ind <- indicator_definitions[i, ]
   aggregation_function <- ind$aggregation_function
@@ -259,5 +259,5 @@ calculate_indicators <- function(i, data, indicator_definitions) {
   
   return(res)
 }
-
+}
 

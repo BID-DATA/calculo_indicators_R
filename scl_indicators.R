@@ -167,38 +167,39 @@ if (tipo=="censos"){
     ### adding to disagregation column, geolevel1
     indicator_definitions$disaggregation <- sub(",isoalpha3", ",geolev1,isoalpha3", indicator_definitions$disaggregation)
   }
-  num_cores <- 2
+  num_cores <- 1
 }
 
   # number of cores to use, often set to one less than the total available
-cl <- makeCluster(num_cores)
+#cl <- makeCluster(num_cores)
 
 # Export data, indicator definitions and the necessary functions to the cluster
-clusterExport(cl, c("data_filt", "indicator_definitions", "scl_pct", "scl_mean","scl_gini","calculate_indicators", "evaluatingFilter", "drop_na"))
+#clusterExport(cl, c("data_filt", "indicator_definitions", "scl_pct", "scl_mean","scl_gini","calculate_indicators", "evaluatingFilter", "drop_na"))
 
 # Load necessary packages on each node of the cluster
-clusterEvalQ(cl, {
-  library(magrittr)
-  library(dplyr)
-  library(rlang)
-})
+#clusterEvalQ(cl, {
+#  library(magrittr)
+#  library(dplyr)
+#  library(rlang)
+#})
 
-is_haven_labelled <- function(x) {
-  inherits(x, "haven_labelled")
-}
+#is_haven_labelled <- function(x) {
+#  inherits(x, "haven_labelled")
+#}
 
 # Convert all haven_labelled columns to numeric
 data_filt <- data_filt %>%
   mutate(across(where(is_haven_labelled), as.numeric))
 message(paste("Calculating indicators ",pais,": ", anio))
 # Call the function in parallel
-results <- parLapply(cl, 1:nrow(indicator_definitions), calculate_indicators, data_filt, indicator_definitions)
+results <- calculate_indicators(data_filt,indicator_definitions)
+#results <- parLapply(cl, 1:nrow(indicator_definitions), calculate_indicators, data_filt, indicator_definitions)
 
 # Combine results
 data_total <- do.call(rbind, results)
 
 # Stop the cluster
-stopCluster(cl)
+#stopCluster(cl)
 
 # remove NA 
 message(paste("Quality analysis ",pais,": ", anio))
