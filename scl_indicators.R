@@ -9,9 +9,7 @@
   message(paste("Loading database ",pais,": ", anio))
   base <- functionRoundAndSurvey(pais,tipo,anio)
   
-  # Read data
-  data <- read_dta(base)
- 
+
   
   if (tipo == "censos") {
     #Keep only needed variables
@@ -22,16 +20,16 @@
 
     # Get the names of the variables that need to be in the data
     required_vars <- unique(varlist_censos$Variable)
-    
+    # Read data
+    data_filt <- read_dta(base,col_select=any_of(required_vars))
+    # Remove data we do not need and free memory
     # Check which of the required variables are not in the data
-    missing_vars <- setdiff(required_vars, colnames(data))
+    missing_vars <- setdiff(required_vars, colnames(data_filt))
     
     # Add the missing variables to the data with NA values
     for (var in missing_vars) {
-      data[[var]] <- NA
+      data_filt[[var]] <- NA
     }    
-        
-    data_filt <- data[,varlist_censos$Variable]
     
   }
   
@@ -47,20 +45,22 @@ if (tipo == "encuestas") {
   
   # Get the names of the variables that need to be in the data
   required_vars <- unique(variables_encuestas$Variable)
-  
+  # Read data
+  data_filt <- read_dta(base,col_select=any_of(required_vars))  
   # Check which of the required variables are not in the data
-  missing_vars <- setdiff(required_vars, colnames(data))
+  missing_vars <- setdiff(required_vars, colnames(data_filt))
   
   # Add the missing variables to the data with NA values
   for (var in missing_vars) {
-    data[[var]] <- NA
+    data_filt[[var]] <- NA
   }
   
-  # creating empty column for each missing variable in R
-  data_filt <- data[,unique(variables_encuestas$Variable)]
   
 }
 
+rm("required_vars","missing_vars")
+gc()
+  
 #### Compute intermediate variables  ####
 message(paste("Loading intermediate variables ",pais,": ", anio))
 source("var_LMK.R")
@@ -145,7 +145,7 @@ if (tipo == "encuestas") {
 }
 
 # Remove data we do not need and free memory
-rm("data_lmk", "data_edu", "data_soc", "data_gdi", "data", "data_filt")
+rm("data_lmk", "data_edu", "data_soc", "data_gdi", "data_filt")
 gc()
 
 # Read all functions needed for computation 
