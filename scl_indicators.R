@@ -62,13 +62,13 @@ rm("required_vars","missing_vars")
 gc()
   
 #### Compute intermediate variables  ####
-message(paste("Loading intermediate variables ",pais,": ", anio))
+message(paste("Loading intermediate variables LMK",pais,": ", anio))
 source("var_LMK.R")
-
+message(paste("Loading intermediate variables EDU",pais,": ", anio))
 source("var_EDU.R")
-
+message(paste("Loading intermediate variables GDI",pais,": ", anio))
 source("var_GDI.R")
-
+message(paste("Loading intermediate variables SOC",pais,": ", anio))
 source("var_SOC.R")
 
 
@@ -80,6 +80,7 @@ if (tipo == "censos") {
   data_filt <- data_filt %>% 
     dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
+  write.csv(data_filt, paste("Outputs/censos_hogares_", pais,"_",anio,".csv",sep = ""), row.names=FALSE)
   #data_edu <- data_edu %>% 
   #  dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
   #                    "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
@@ -115,6 +116,7 @@ if (tipo == "encuestas") {
   data_filt <- data_filt %>% 
     dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","ine01",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
+  
   #data_edu <- data_edu %>% 
   #  dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","ine01",
   #                    "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
@@ -192,7 +194,7 @@ data_filt <- data_filt %>%
   mutate(across(where(is_haven_labelled), as.numeric))
 message(paste("Calculating indicators ",pais,": ", anio))
 # Call the function in parallel
-results <- calculate_indicators(data_filt,indicator_definitions)
+calculate_indicators(data_filt,indicator_definitions)
 #results <- parLapply(cl, 1:nrow(indicator_definitions), calculate_indicators, data_filt, indicator_definitions)
 
 # Combine results

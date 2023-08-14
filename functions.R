@@ -251,13 +251,24 @@ calculate_indicators <- function(data, indicator_definitions) {
           res_list[[j]] <- res
       }
       
+ 
+      
     }
+    
+  }
+  if (tipo=="censos"){
+    # Combine all disaggregated and total results
+    res <- do.call(rbind, res_list)
+    write.csv(res, paste("Outputs/indicadores_censos_hogares_", pais,"_",anio,i,".csv",sep = ""), row.names=FALSE)
+    rm(res_list)
+    gc()
+    res_list <- list()
   }
   
-  # Combine all disaggregated and total results
-  res <- do.call(rbind, res_list)
   
-  return(res)
-}
+
+  }
+  #res <- do.call(rbind, res_list)
+  #return(res)
 }
 
