@@ -81,6 +81,7 @@ if (tipo == "censos") {
     dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
                       "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
   write.csv(data_filt, paste("Outputs/censos_hogares_", pais,"_",anio,".csv",sep = ""), row.names=FALSE)
+  data_filt <- read.csv("Outputs/censos_hogares_BRA_1991.csv")
   #data_edu <- data_edu %>% 
   #  dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
   #                    "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
@@ -148,6 +149,7 @@ if (tipo == "encuestas") {
 
 # Remove data we do not need and free memory
 rm("variables_encuestas", "varlist_censos", "variables_censos", "required_vars")
+rm("data", "data_aux", "data_scl", "data_total")
 gc()
 
 # Read all functions needed for computation 
@@ -190,15 +192,25 @@ if (tipo=="censos"){
 #}
 
 # Convert all haven_labelled columns to numeric
-data_filt <- data_filt %>%
-  mutate(across(where(is_haven_labelled), as.numeric))
+#data_filt <- data_filt %>%
+#  mutate(across(where(is_haven_labelled), as.numeric))
 message(paste("Calculating indicators ",pais,": ", anio))
 # Call the function in parallel
 calculate_indicators(data_filt,indicator_definitions)
+
+rm("data_filt")
+gc()
+# Combining results
+
+temp = list.files(path = paste(getwd(),"/Outputs/",sep=""),pattern = paste("indicadores_censos_hogares_", pais,"_",anio,".+.csv",sep = ""))
+
+data_total <- do.call("rbind", lapply(temp, FUN = function(file) {
+  read.table(paste("Outputs/",file,sep=''), header=TRUE, sep=",")
+}))
 #results <- parLapply(cl, 1:nrow(indicator_definitions), calculate_indicators, data_filt, indicator_definitions)
 
 # Combine results
-data_total <- do.call(rbind, results)
+#data_total <- do.call(rbind, results)
 
 # Stop the cluster
 #stopCluster(cl)
