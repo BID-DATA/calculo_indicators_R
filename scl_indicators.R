@@ -13,7 +13,7 @@
   
   if (tipo == "censos") {
     #Keep only needed variables
-    variables_censos <- readxl::read_xlsx("Inputs/D.7.1.3 Diccionario variables censos.xlsx")
+    variables_censos <- readxl::read_xlsx("Inputs/D.7.1.3 Diccionario variables censosv2.xlsx")
     
     varlist_censos <- variables_censos %>% 
       filter(!is.na(Variable))
@@ -62,14 +62,14 @@ rm("required_vars","missing_vars")
 gc()
   
 #### Compute intermediate variables  ####
-message(paste("Loading intermediate variables LMK",pais,": ", anio))
-source("var_LMK.R")
-message(paste("Loading intermediate variables EDU",pais,": ", anio))
-source("var_EDU.R")
+#message(paste("Loading intermediate variables LMK",pais,": ", anio))
+#source("var_LMK.R")
+#message(paste("Loading intermediate variables EDU",pais,": ", anio))
+#source("var_EDU.R")
 message(paste("Loading intermediate variables GDI",pais,": ", anio))
 source("var_GDI.R")
-message(paste("Loading intermediate variables SOC",pais,": ", anio))
-source("var_SOC.R")
+#message(paste("Loading intermediate variables SOC",pais,": ", anio))
+#source("var_SOC.R")
 
 
 #### Join final data with intermediate variables #####
@@ -77,11 +77,11 @@ source("var_SOC.R")
 if (tipo == "censos") {
   
   # Make sure the joining columns form a unique identifier in the right datasets
-  data_filt <- data_filt %>% 
-    dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
-                      "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
-  write.csv(data_filt, paste("Outputs/censos_hogares_", pais,"_",anio,".csv",sep = ""), row.names=FALSE)
-  data_filt <- read.csv("Outputs/censos_hogares_BRA_1991.csv")
+  #data_filt <- data_filt %>% 
+  #  dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
+  #                    "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
+  #write.csv(data_filt, paste("Outputs/censos_hogares_", pais,"_",anio,".csv",sep = ""), row.names=FALSE)
+  #data_filt <- read.csv(paste("Outputs/censos_hogares_", pais,"_",anio,".csv",sep = ""))
   #data_edu <- data_edu %>% 
   #  dplyr::distinct(across(c("region_BID_c", "pais_c","estrato_ci", "zona_c","geolev1",
   #                    "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
@@ -159,7 +159,7 @@ source("functions.R")
 ##### Use parallel programming -----
 
 # read the indicators definitions in the csv
-indicator_definitions <- read.csv("Inputs/idef.csv")
+indicator_definitions <- read.csv("Inputs/idefv2.csv") %>% filter(gdiCensus=="Test")
 # if needed you can filter here by theme
 num_cores <- detectCores() - 1
 
@@ -275,7 +275,7 @@ if (tipo=="censos"){
 end_time <- Sys.time() 
 
 # Now calculate the difference
-time_difference <- difftime(end_time, start_time, units = "mins")
+#time_difference <- difftime(end_time, start_time, units = "mins")
 
-message(paste(pais,anio, time_difference, "minutes"))
+#message(paste(pais,anio, time_difference, "minutes"))
 
