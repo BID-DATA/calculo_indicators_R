@@ -27,7 +27,49 @@ if (tipo=="censos"){
 # Get unique combinations of country and year
 unique_combinations <- unique(available_years[c("Pais", "year")])
 
+# LMK
+# Loop over each unique row in unique_combinations
+for (i in 1:nrow(unique_combinations)) {
+  
+  skip_to_next <- FALSE
+  
+  # Get country and year from the current row
+  pais <- unique_combinations[[i, "Pais"]]
+  anio <- unique_combinations[[i, "year"]]
+  
+  
+  tryCatch({
+    source("scl_indicatorsLMK.R")
+    
+    if (tipo == "encuestas") {
+      write.csv(data_total, paste("Outputs/indicadores_encuestas_hogares_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
+    }
+    
+    # Add more conditions for other types if needed
+    if (tipo == "censos") {
+      write.csv(data_total, paste("Outputs/indicadores_censos_hogares_demographic_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
+      rm(data_total)
+      rm("data_filt", "data_total","results")
+      gc()
+      gc()
+      gc()
+      gc()
+    }
+    
+    # Add more code here if needed
+    
+  }, error = function(e) {
+    skip_to_next <<- TRUE
+    print(paste(pais,anio,"Error al correr base"))
+  })
+  
+  if (skip_to_next) {
+    next
+  }
+  
+}
 
+# demographic
 # Loop over each unique row in unique_combinations
 for (i in 1:nrow(unique_combinations)) {
   
@@ -39,7 +81,7 @@ for (i in 1:nrow(unique_combinations)) {
 
   
   tryCatch({
-    source("scl_indicators.R")
+    source("scl_indicatorsDemographic.R")
     
     if (tipo == "encuestas") {
       write.csv(data_total, paste("Outputs/indicadores_encuestas_hogares_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
@@ -47,7 +89,96 @@ for (i in 1:nrow(unique_combinations)) {
     
     # Add more conditions for other types if needed
     if (tipo == "censos") {
-      write.csv(data_total, paste("Outputs/indicadores_censos_hogares_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
+      write.csv(data_total, paste("Outputs/indicadores_censos_hogares_demographic_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
+      rm(data_total)
+      rm("data_filt", "data_total","results")
+      gc()
+      gc()
+      gc()
+      gc()
+    }
+    
+    # Add more code here if needed
+    
+  }, error = function(e) {
+    skip_to_next <<- TRUE
+    print(paste(pais,anio,"Error al correr base"))
+  })
+  
+  if (skip_to_next) {
+    next
+  }
+  
+}
+
+# vivienda
+# Loop over each unique row in unique_combinations
+for (i in 1:nrow(unique_combinations)) {
+  
+  skip_to_next <- FALSE
+  
+  # Get country and year from the current row
+  pais <- unique_combinations[[i, "Pais"]]
+  anio <- unique_combinations[[i, "year"]]
+  
+  
+  tryCatch({
+    source("scl_indicatorsVivienda.R")
+    
+    if (tipo == "encuestas") {
+      write.csv(data_total, paste("Outputs/indicadores_encuestas_hogares_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
+    }
+    
+    # Add more conditions for other types if needed
+    if (tipo == "censos") {
+      write.csv(data_total, paste("Outputs/indicadores_censos_hogares_vivienda_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
+      rm(data_total)
+      gc()
+      gc()
+      gc()
+      gc()
+    }
+    
+    # Add more code here if needed
+    
+  }, error = function(e) {
+    skip_to_next <<- TRUE
+    print(paste(pais,anio,"Error al correr base"))
+  })
+  
+  if (skip_to_next) {
+    next
+  }
+  
+}
+
+#EDU
+# Loop over each unique row in unique_combinations
+for (i in 1:nrow(unique_combinations)) {
+  
+  skip_to_next <- FALSE
+  
+  # Get country and year from the current row
+  pais <- unique_combinations[[i, "Pais"]]
+  anio <- unique_combinations[[i, "year"]]
+  
+  
+  tryCatch({
+    source("scl_indicatorsEDU.R")
+    
+    if (tipo == "encuestas") {
+      write.csv(data_total, paste("Outputs/indicadores_encuestas_hogares_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
+    }
+    
+    # Add more conditions for other types if needed
+    if (tipo == "censos") {
+      write.csv(data_total, paste("Outputs/indicadores_censos_hogares_edu_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
+      rm(data_total)
+      rm("data_filt", "data_total","results")
+      gc()
+      gc()
+      gc()
+      gc()
     }
     
     # Add more code here if needed
