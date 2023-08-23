@@ -13,7 +13,7 @@
   
   if (tipo == "censos") {
     #Keep only needed variables
-    variables_censos <- readxl::read_xlsx("Inputs/D.7.1.3 Diccionario variables censosv2.xlsx")
+    variables_censos <- readxl::read_xlsx("Inputs/D.7.1.3 Diccionario variables censosDemographic.xlsx")
     
     varlist_censos <- variables_censos %>% 
       filter(!is.na(Variable))
@@ -29,7 +29,10 @@
     # Add the missing variables to the data with NA values
     for (var in missing_vars) {
       data_filt[[var]] <- NA
-    }    
+    }
+    if (all(is.na(data_filt$factor_ci))){
+      data_filt[["factor_ci"]] <- 1
+    }
     
   }
   
@@ -67,7 +70,7 @@ gc()
 #message(paste("Loading intermediate variables EDU",pais,": ", anio))
 #source("var_EDU.R")
 message(paste("Loading intermediate variables GDI",pais,": ", anio))
-source("var_GDI.R")
+source("var_GDI_Demographic.R")
 #message(paste("Loading intermediate variables SOC",pais,": ", anio))
 #source("var_SOC.R")
 
@@ -159,7 +162,7 @@ source("functions.R")
 ##### Use parallel programming -----
 
 # read the indicators definitions in the csv
-indicator_definitions <- read.csv("Inputs/idefv2.csv") %>% filter(gdiCensus=="Test")
+indicator_definitions <- read.csv("Inputs/idefDemografia.csv") %>% filter(gdiCensus=="Test")
 # if needed you can filter here by theme
 num_cores <- detectCores() - 1
 
@@ -202,7 +205,7 @@ rm("data_filt")
 gc()
 # Combining results
 
-temp = list.files(path = paste(getwd(),"/Outputs/",sep=""),pattern = paste("indicadores_censos_hogares_", pais,"_",anio,".+.csv",sep = ""))
+temp = list.files(path = paste(getwd(),"/Outputs/",sep=""),pattern = paste("indicadores_censos_hogares_demographic_", pais,"_",anio,".+.csv",sep = ""))
 
 data_total <- do.call("rbind", lapply(temp, FUN = function(file) {
   read.table(paste("Outputs/",file,sep=''), header=TRUE, sep=",")
