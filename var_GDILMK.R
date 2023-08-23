@@ -45,11 +45,11 @@ if (tipo == "censos") {
              TRUE ~ NA_character_
            ),
           isoalpha3 = pais_c,
-          year = anio_c,
-          pea = dplyr::case_when((condocup_ci == 1 | condocup_ci == 2 ) & pet == 1 ~ 1,
-                                 condocup_ci==3 & pet==1 ~ 0,
-                                 TRUE ~NA_real_),
-          pet = dplyr::if_else(edad_ci>=15 & edad_ci<=64,1,0),
+          year = anio_c
+          #pea = dplyr::case_when((condocup_ci == 1 | condocup_ci == 2 ) & pet == 1 ~ 1,
+          #                       condocup_ci==3 & pet==1 ~ 0,
+          #                       TRUE ~NA_real_),
+          #pet = dplyr::if_else(edad_ci>=15 & edad_ci<=64,1,0),
           #3.1 Primaria por grupo de países
           #nini = dplyr::if_else(asiste_ci==0 & condocup_ci==3,1,0),
           #nini = dplyr::if_else(is.na(asiste_ci) | is.na(condocup_ci),NA,nini),
@@ -156,99 +156,99 @@ if (tipo == "censos") {
           #tsecundaria = dplyr::if_else(is.na(edupc_ci),NA,tsecundaria),
           #t_cond_primaria   = dplyr::if_else((tprimaria==1   & age_term_p_c==1),1,0),          
           #t_cond_secundaria = dplyr::if_else((tsecundaria==1 & age_term_s_c==1),1,0),
-          npers = dplyr::if_else(TRUE,1,0),
+          #npers = dplyr::if_else(TRUE,1,0)
           #jefa_ci = dplyr::if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
           #1.6.11 Categorías de grandes grupos de ocupación
-          administrativo = dplyr::case_when(
-            condocup_ci==1 & ocupa_ci==3~ 1,
-            condocup_ci==1 & !is.na(ocupa_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          director = dplyr::case_when(
-            condocup_ci==1 & ocupa_ci==2~ 1,
-            condocup_ci==1 & !is.na(ocupa_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          obreros = dplyr::case_when(
-            condocup_ci==1 & ocupa_ci==7~ 1,
-            condocup_ci==1 & !is.na(ocupa_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          profestecnico = dplyr::case_when(
-            condocup_ci==1 & ocupa_ci==1~ 1,
-            condocup_ci==1 & !is.na(ocupa_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          trabagricola = dplyr::case_when(
-            condocup_ci==1 & ocupa_ci==6~ 1,
-            condocup_ci==1 & !is.na(ocupa_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          otrostrab = dplyr::case_when(
-            condocup_ci==1 & ocupa_ci==9~ 1,
-            condocup_ci==1 & !is.na(ocupa_ci)~ 0,
-            TRUE ~ NA_real_
-          ), 
-          trabss = dplyr::case_when(
-            condocup_ci==1 & ocupa_ci==5~ 1,
-            condocup_ci==1 & !is.na(ocupa_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          comerciantes = dplyr::case_when(
-            condocup_ci==1 & ocupa_ci==4~ 1,
-            condocup_ci==1 & !is.na(ocupa_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          agro = dplyr::case_when(
-            condocup_ci==1 & rama_ci==1~ 1,
-            condocup_ci==1 & !is.na(rama_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          comercio = dplyr::case_when(
-            condocup_ci==1 & rama_ci==6~ 1,
-            condocup_ci==1 & !is.na(rama_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          construccion = dplyr::case_when(
-            condocup_ci==1 & rama_ci==5~ 1,
-            condocup_ci==1 & !is.na(rama_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          sspublicos = dplyr::case_when(
-            condocup_ci==1 & rama_ci==4~ 1,
-            condocup_ci==1 & !is.na(rama_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          minas = dplyr::case_when(
-            condocup_ci==1 & rama_ci==2~ 1,
-            condocup_ci==1 & !is.na(rama_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          servicios = dplyr::case_when(
-            condocup_ci==1 & rama_ci==9~ 1,
-            condocup_ci==1 & !is.na(rama_ci)~ 0,
-            TRUE ~ NA_real_
-          ), 
-          financiero = dplyr::case_when(
-            condocup_ci==1 & rama_ci==8~ 1,
-            condocup_ci==1 & !is.na(rama_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          industria = dplyr::case_when(
-            condocup_ci==1 & rama_ci==3~ 1,
-            condocup_ci==1 & !is.na(rama_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
-          transporte = dplyr::case_when(
-            condocup_ci==1 & rama_ci==7~ 1,
-            condocup_ci==1 & !is.na(rama_ci)~ 0,
-            TRUE ~ NA_real_
-          ),
+          #administrativo = dplyr::case_when(
+          #  condocup_ci==1 & ocupa_ci==3~ 1,
+          #  condocup_ci==1 & !is.na(ocupa_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #director = dplyr::case_when(
+          #  condocup_ci==1 & ocupa_ci==2~ 1,
+          #  condocup_ci==1 & !is.na(ocupa_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #obreros = dplyr::case_when(
+          #  condocup_ci==1 & ocupa_ci==7~ 1,
+          #  condocup_ci==1 & !is.na(ocupa_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #profestecnico = dplyr::case_when(
+          #  condocup_ci==1 & ocupa_ci==1~ 1,
+          #  condocup_ci==1 & !is.na(ocupa_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #trabagricola = dplyr::case_when(
+          #  condocup_ci==1 & ocupa_ci==6~ 1,
+          #  condocup_ci==1 & !is.na(ocupa_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #otrostrab = dplyr::case_when(
+          #  condocup_ci==1 & ocupa_ci==9~ 1,
+          #  condocup_ci==1 & !is.na(ocupa_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #), 
+          #trabss = dplyr::case_when(
+          #  condocup_ci==1 & ocupa_ci==5~ 1,
+          #  condocup_ci==1 & !is.na(ocupa_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #comerciantes = dplyr::case_when(
+          #  condocup_ci==1 & ocupa_ci==4~ 1,
+          #  condocup_ci==1 & !is.na(ocupa_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #agro = dplyr::case_when(
+          #  condocup_ci==1 & rama_ci==1~ 1,
+          #  condocup_ci==1 & !is.na(rama_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #comercio = dplyr::case_when(
+          #  condocup_ci==1 & rama_ci==6~ 1,
+          #  condocup_ci==1 & !is.na(rama_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #construccion = dplyr::case_when(
+          #  condocup_ci==1 & rama_ci==5~ 1,
+          #  condocup_ci==1 & !is.na(rama_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #sspublicos = dplyr::case_when(
+          #  condocup_ci==1 & rama_ci==4~ 1,
+          #  condocup_ci==1 & !is.na(rama_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #minas = dplyr::case_when(
+          #  condocup_ci==1 & rama_ci==2~ 1,
+          #  condocup_ci==1 & !is.na(rama_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #servicios = dplyr::case_when(
+          #  condocup_ci==1 & rama_ci==9~ 1,
+          #  condocup_ci==1 & !is.na(rama_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #), 
+          #financiero = dplyr::case_when(
+          #  condocup_ci==1 & rama_ci==8~ 1,
+          #  condocup_ci==1 & !is.na(rama_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #industria = dplyr::case_when(
+          #  condocup_ci==1 & rama_ci==3~ 1,
+          #  condocup_ci==1 & !is.na(rama_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
+          #transporte = dplyr::case_when(
+          #  condocup_ci==1 & rama_ci==7~ 1,
+          #  condocup_ci==1 & !is.na(rama_ci)~ 0,
+          #  TRUE ~ NA_real_
+          #),
           #1.7 Categorías
-          patron = dplyr::case_when(condocup_ci==1 & categopri_ci==1 ~ 1, 
-                                    condocup_ci==1 & categopri_ci!=1 ~ 0),
-          ctapropia = dplyr::case_when(condocup_ci==1 & categopri_ci==2 ~ 1, 
-                                       condocup_ci==1 & categopri_ci!=2 ~ 0),
+          #patron = dplyr::case_when(condocup_ci==1 & categopri_ci==1 ~ 1, 
+          #                          condocup_ci==1 & categopri_ci!=1 ~ 0),
+          #ctapropia = dplyr::case_when(condocup_ci==1 & categopri_ci==2 ~ 1, 
+          #                             condocup_ci==1 & categopri_ci!=2 ~ 0),
         # 
           )  %>% group_by(anio_c, pais_c, idh_ch) %>%
     mutate(#jefa_ch = dplyr::if_else(jefe_ci == 1, sum(jefa_ci, na.rm = TRUE), 0),
