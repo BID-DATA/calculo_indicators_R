@@ -57,7 +57,9 @@ if (tipo == "encuestas") {
     data_filt[[var]] <- NA
   }
   
-  
+  if (all(is.na(data_filt$factor_ci))){
+    data_filt[["factor_ci"]] <- 1
+  }
 }
 
 rm("required_vars","missing_vars")
