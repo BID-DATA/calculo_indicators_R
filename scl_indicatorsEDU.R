@@ -35,6 +35,7 @@
     }
   }
   
+  
 if (tipo == "encuestas") {
   # to do si no encuentra las variables ponlas en missing
   
@@ -56,7 +57,9 @@ if (tipo == "encuestas") {
   for (var in missing_vars) {
     data_filt[[var]] <- NA
   }
-  
+  if (all(is.na(data_filt$factor_ci))){
+    data_filt[["factor_ci"]] <- 1
+  }
   
 }
 
