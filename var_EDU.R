@@ -3,11 +3,10 @@
 # 1. Censos 
 
 if (tipo == "censos") {
-  
   # creating a vector with initial column names
   
   data_filt <- data_filt %>% 
-    mutate(age_25_mas = ifelse(edad_ci>=25, 1, 0), 
+    mutate (age_25_mas = ifelse(edad_ci>=25, 1, 0), 
            #2. Ninis
            nini = ifelse(asiste_ci==0 & (condocup_ci==2 | condocup_ci==3),1,0), ## MODIFIQUE PARA QUE QUEDEN 2 & 3 CONDOCUP
            nini = ifelse(is.na(asiste_ci) | is.na(condocup_ci),NA,nini),
@@ -30,7 +29,7 @@ if (tipo == "censos") {
                                    (pais_c=="TTO") & (aedu_ci>=0 & aedu_ci<7) & (asiste_ci==1 & edad_ci>=6)~ 1,
                                    (aedu_ci>=0 & aedu_ci<6) & (asiste_ci==1 & edad_ci>=6) ~ 1,
                                    TRUE ~ NA_real_),
-           age_prim_sobre = case_when( edad_ci<6 | is.na(aedu_ci) ~ NA_real_,
+           age_prim_sobre = case_when(edad_ci<6 | is.na(aedu_ci) ~ NA_real_),
                                        (pais_c=="BRB") &(asiste_ci==1 & aedu_ci==0 & edad_ci>=7)~ 1,
                                        (pais_c=="BRB") &(asiste_ci==1 & aedu_ci==1 & edad_ci>=8)~ 1,
                                        (pais_c=="BRB") &(asiste_ci==1 & aedu_ci==2 & edad_ci>=9)~ 1,
@@ -151,10 +150,7 @@ if (tipo == "censos") {
            age_15_29_edu = ifelse(edad_ci>=15 & edad_ci<=29, 1, 0),
            age_18_24_edu = ifelse(edad_ci>=18 & edad_ci<=24, 1, 0),
            age_18_23_edu = ifelse(edad_ci>=18 & edad_ci<=23, 1, 0))
-  
-  
-  
-}
+           }
 
 # 2. Encuestas
 
