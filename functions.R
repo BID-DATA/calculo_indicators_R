@@ -40,7 +40,7 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
       dplyr::summarise(
         value = sum(factor_ci[!!.condicion1], na.rm=TRUE) / sum(factor_ci[!!.condicion2], na.rm=TRUE),
         indicator = .nombre,
-        se = sqrt(value * (1 - value) / sum(factor_ci[!!.condicion2], na.rm=TRUE)),
+        se = sqrt(value * (1 - value) / sum(!!.condicion2, na.rm=TRUE)),
         cv = se / value * 100,
         level =  sum(factor_ci * !!.condicion1, na.rm=TRUE),
         sample = sum(!!.condicion2, na.rm=TRUE)
@@ -49,9 +49,9 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   } else {
     data_aux <- .data %>%
       dplyr::summarise(
-        value = sum(factor_ci[!!.condicion1], na.rm=TRUE) / sum(factor_ci[!!.condicion2], na.rm=TRUE),
+        value = sum(factor_ci[!!.condicion1], na.rm=TRUE) / sum(!!.condicion2, na.rm=TRUE),
         indicator = .nombre,
-        se = sqrt(value * (1 - value) / sum(factor_ci[!!.condicion2], na.rm=TRUE)),
+        se = sqrt(value * (1 - value) / sum(!!.condicion2, na.rm=TRUE)),
         cv = se / value * 100,
         level =  sum(factor_ci * !!.condicion1, na.rm=TRUE),
         sample = sum(!!.condicion2, na.rm=TRUE)
@@ -101,7 +101,7 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
       dplyr::summarise(
         value = weighted.mean(!!.mean_var,w=factor_ci, na.rm=TRUE),
         indicator = .nombre,
-        se = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE) / sum(factor_ci)),
+        se = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE) / sum(!!.mean_var,na.rm=TRUE)),
         cv = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE)) / value * 100,
         level = sum(!!.condicion, na.rm=TRUE),
         sample = sum(!!.mean_var, na.rm=TRUE)
@@ -113,7 +113,7 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
       dplyr::summarise(
         value = weighted.mean(!!.mean_var,w=factor_ci, na.rm=TRUE),
         indicator = .nombre,
-        se = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE) / sum(factor_ci)),
+        se = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE) / sum(!!.mean_var,na.rm=TRUE)),
         cv = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE)) / value * 100,
         level = sum(!!.condicion, na.rm=TRUE),
         sample = sum(!!.mean_var, na.rm=TRUE)
