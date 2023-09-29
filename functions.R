@@ -38,22 +38,22 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
     data_aux <- .data %>%
       dplyr::group_by_at(.group_vars) %>%
       dplyr::summarise(
-        value = sum(factor_ci[!!.condicion1], na.rm=TRUE) / sum(factor_ci[!!.condicion2], na.rm=TRUE),
+        value = sum(factor_ch[!!.condicion1], na.rm=TRUE) / sum(factor_ch[!!.condicion2], na.rm=TRUE),
         indicator = .nombre,
         se = sqrt(value * (1 - value) / sum(!!.condicion2, na.rm=TRUE)),
         cv = se / value * 100,
-        level =  sum(factor_ci * !!.condicion1, na.rm=TRUE),
+        level =  sum(factor_ch * !!.condicion1, na.rm=TRUE),
         sample = sum(!!.condicion2, na.rm=TRUE)
       ) %>% 
       dplyr::ungroup()
   } else {
     data_aux <- .data %>%
       dplyr::summarise(
-        value = sum(factor_ci[!!.condicion1], na.rm=TRUE) / sum(!!.condicion2, na.rm=TRUE),
+        value = sum(factor_ch[!!.condicion1], na.rm=TRUE) / sum(!!.condicion2, na.rm=TRUE),
         indicator = .nombre,
         se = sqrt(value * (1 - value) / sum(!!.condicion2, na.rm=TRUE)),
         cv = se / value * 100,
-        level =  sum(factor_ci * !!.condicion1, na.rm=TRUE),
+        level =  sum(factor_ch * !!.condicion1, na.rm=TRUE),
         sample = sum(!!.condicion2, na.rm=TRUE)
       )
   }
@@ -99,10 +99,10 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
       dplyr::filter(!!.condicion) %>%
       dplyr::group_by_at(.group_vars) %>%
       dplyr::summarise(
-        value = weighted.mean(!!.mean_var,w=factor_ci, na.rm=TRUE),
+        value = weighted.mean(!!.mean_var,w=factor_ch, na.rm=TRUE),
         indicator = .nombre,
-        se = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE) / sum(!!.mean_var,na.rm=TRUE)),
-        cv = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE)) / value * 100,
+        se = sqrt(stats::var(!!.mean_var * factor_ch, na.rm = TRUE) / sum(!!.mean_var,na.rm=TRUE)),
+        cv = sqrt(stats::var(!!.mean_var * factor_ch, na.rm = TRUE)) / value * 100,
         level = sum(!!.condicion, na.rm=TRUE),
         sample = sum(!!.mean_var, na.rm=TRUE)
       ) %>% 
@@ -111,10 +111,10 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
     data_aux <- .data %>%
       dplyr::filter(!!.condicion) %>%
       dplyr::summarise(
-        value = weighted.mean(!!.mean_var,w=factor_ci, na.rm=TRUE),
+        value = weighted.mean(!!.mean_var,w=factor_ch, na.rm=TRUE),
         indicator = .nombre,
-        se = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE) / sum(!!.mean_var,na.rm=TRUE)),
-        cv = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE)) / value * 100,
+        se = sqrt(stats::var(!!.mean_var * factor_ch, na.rm = TRUE) / sum(!!.mean_var,na.rm=TRUE)),
+        cv = sqrt(stats::var(!!.mean_var * factor_ch, na.rm = TRUE)) / value * 100,
         level = sum(!!.condicion, na.rm=TRUE),
         sample = sum(!!.mean_var, na.rm=TRUE)
       )
@@ -167,7 +167,7 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
       filter(!is.infinite(!!.condicion1)) %>% 
       dplyr::group_by_at(.group_vars) %>%
       dplyr::summarise(
-        value = reldist::gini(!!.condicion1, weights = factor_ci),
+        value = reldist::gini(!!.condicion1, weights = factor_ch),
         indicator = .nombre,
         level =  NA_real_,
         se = NA_real_, 
@@ -181,7 +181,7 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
       filter(!is.na(!!.condicion1)) %>% 
       filter(!is.infinite(!!.condicion1)) %>% 
       dplyr::summarise(
-        value = reldist::gini(!!.condicion1, weights = factor_ci),
+        value = reldist::gini(!!.condicion1, weights = factor_ch),
         indicator = .nombre,
         level =  NA_real_,
         se = NA_real_, 
