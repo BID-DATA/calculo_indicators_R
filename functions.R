@@ -23,6 +23,8 @@ evaluatingFilter <- function(x, variable) {
       next
     }
   }
+
+
   return(result)
 }
 
@@ -70,6 +72,21 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
     data_aux <- data_aux %>% rename(age = age_15_29_lmk)
   }
   
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('quintile_ci' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci)
+  } else if('quintile_ci_urban' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci_urban)
+  } else if('quintile_ci_rural' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci_rural)
+  } else if('quintile_ch' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch)
+  }else if('quintile_ch_urban' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch_urban)
+  }else if('quintile_ch_rural' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch_rural)
+  }
+  
   # Add disaggregation columns if not already present
   for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
     if (!(disaggregation_col %in% colnames(data_aux))) {
@@ -85,6 +102,87 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   return(data_aux)
 }
 
+# Percentage function 2
+
+scl_pctv2 <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
+  
+  # Convert conditions to expressions
+  .condicion1 <- rlang::parse_expr(.condicion1)
+  .condicion2 <- rlang::parse_expr(.condicion2)
+  vector2 <- c("ethnicity","disability","area")  
+  if (!is.null(.group_vars)) {
+    data_aux <- .data %>%
+      dplyr::group_by_at(.group_vars) %>%
+      dplyr::summarise(
+        value1 = sum(factor_ci[!!.condicion1], na.rm=TRUE),
+        value3 = sum(factor_ci[!!.condicion2], na.rm=TRUE),
+        valueNoFactor = sum(!!.condicion2, na.rm=TRUE)) %>% 
+      dplyr::ungroup()%>%
+      group_by_at(Reduce(intersect,list(.group_vars,vector2))) %>%
+      mutate(value2 = sum(value3, na.rm=TRUE))%>% 
+      dplyr::ungroup()%>% 
+      mutate(
+        value = value1/ value2,
+        indicator = .nombre,
+        se = sqrt(value * (1 - value) / value2),
+        cv = se / value * 100,
+        level =  value1,
+        sample = valueNoFactor
+      ) %>% 
+      dplyr::ungroup()
+  } else {
+    data_aux <- .data %>%
+      dplyr::summarise(
+        value = sum(factor_ci[!!.condicion1], na.rm=TRUE) / sum(factor_ci[!!.condicion2], na.rm=TRUE),
+        indicator = .nombre,
+        se = sqrt(value * (1 - value) / sum(factor_ci[!!.condicion2], na.rm=TRUE)),
+        cv = se / value * 100,
+        level =  sum(factor_ci * !!.condicion1, na.rm=TRUE),
+        sample = sum(!!.condicion2, na.rm=TRUE)
+      )
+  }
+  
+  
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('age_lmk' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_lmk)
+  } else if('age_scl' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_scl)
+  } else if('age_15_64_lmk' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_15_64_lmk)
+  } else if('age_15_29_lmk' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_15_29_lmk)
+  }
+  
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('quintile_ci' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci)
+  } else if('quintile_ci_urban' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci_urban)
+  } else if('quintile_ci_rural' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci_rural)
+  } else if('quintile_ch' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch)
+  }else if('quintile_ch_urban' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch_urban)
+  }else if('quintile_ch_rural' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch_rural)
+  }
+  
+  # Add disaggregation columns if not already present
+  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
+    if (!(disaggregation_col %in% colnames(data_aux))) {
+      data_aux[[disaggregation_col]] <- "Total"
+    }
+  }
+  
+  # Rearrange columns
+  data_aux <- data_aux %>% 
+    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,
+                  value, level, se, cv, sample)
+  
+  return(data_aux)
+}
 
 
 # Mean function 
@@ -205,8 +303,43 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   return(data_aux)
 }
 
-calculate_indicators <- function(data, indicator_definitions) {
-  for (i in 1:nrow(indicator_definitions)){
+# Ratio decile 
+
+scl_ratio_decil <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
+  
+  # Convert conditions to expressions
+  .condicion1 <- rlang::parse_expr(.condicion1)
+  .condicion2 <- rlang::parse_expr(.condicion2)
+  
+  value1 = .data %>% filter(!!.condicion1) %>% head(1) %>% select(pc_ytot_ch) %>% pull()
+  value2 = .data %>% filter(!!.condicion2) %>% head(1) %>% select(pc_ytot_ch) %>% pull()
+  value <- c(value1/value2)
+  indicator = c(.nombre)
+  level= c(NA_real_)
+  se = c(NA_real_)
+  cv = c(NA_real_)
+  sample = c(NA_real_)
+  year = c(.data %>% head(1) %>% select(year) %>% pull())
+  isoalpha3 = c(.data %>% head(1) %>% select(isoalpha3) %>% pull())
+  data_aux <- data.frame(value,indicator,level,se,cv,sample,isoalpha3,year)
+  
+  # Add disaggregation columns if not already present
+  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
+    if (!(disaggregation_col %in% colnames(data_aux))) {
+      data_aux[[disaggregation_col]] <- "Total"
+    }
+  }
+  
+  # Rearrange columns
+  data_aux <- data_aux %>% 
+    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,
+                  value, level, se, cv, sample)
+  
+  return(data_aux)
+}
+
+calculate_indicators <- function(i, data, indicator_definitions) {
+  
   # Extract each component of the current indicator definition
   ind <- indicator_definitions[i, ]
   aggregation_function <- ind$aggregation_function
@@ -242,6 +375,9 @@ calculate_indicators <- function(data, indicator_definitions) {
       if(aggregation_function == "pct") {
         res <- scl_pct(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
         res_list[[j]] <- res
+      } else if(aggregation_function == "pctv2") {
+        res <- scl_pctv2(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+        res_list[[j]] <- res
       } else if(aggregation_function == "mean") {
         res <- scl_mean(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
         res_list[[j]] <- res
@@ -249,26 +385,18 @@ calculate_indicators <- function(data, indicator_definitions) {
           else if(aggregation_function == "gini") {
           res <- scl_gini(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
           res_list[[j]] <- res
-      }
-      
- 
+          } else if(aggregation_function == "ratio_decil") {
+            res <- scl_ratio_decil(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+            res_list[[j]] <- res
+          }
       
     }
-    
-  }
-  if (tipo=="censos"){
-    # Combine all disaggregated and total results
-    res <- do.call(rbind, res_list)
-    write.csv(res, paste("Outputs/indicadores_censos_hogares_", pais,"_",anio,i,".csv",sep = ""), row.names=FALSE)
-    rm(res_list)
-    gc()
-    res_list <- list()
   }
   
+  # Combine all disaggregated and total results
+  res <- do.call(rbind, res_list)
   
-
-  }
-  #res <- do.call(rbind, res_list)
-  #return(res)
+  return(res)
 }
+
 
