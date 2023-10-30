@@ -47,7 +47,7 @@ for (i in 1:nrow(unique_combinations)) {
     
     # Add more conditions for other types if needed
     if (tipo == "censos") {
-      write.csv(data_total, paste("Outputs/indicadores_censos_hogares_demographic_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
+      write.csv(data_total, paste("Outputs/indicadores_censos_hogares_lmk_", pais, "_", anio, ".csv", sep = ""), row.names = FALSE)
       rm(data_total)
       rm("data_filt", "data_total","results")
       gc()
