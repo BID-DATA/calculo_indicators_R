@@ -8,8 +8,8 @@ library(parallel)
 library(multidplyr)
 
 
-pais<-"COL"
-anio<-"2005"
+pais<-"ARG"
+anio<-"2001"
 
 # select between "censos"/"encuestas"
 tipo<-"censos"
@@ -18,7 +18,7 @@ tipo<-"censos"
 geoLevel <- "geolev1"
 
 
-source("scl_indicators.R")
+source("scl_indicatorsDemographic.R")
 if (tipo == "encuestas") {
   write.csv(data_total, paste("Outputs/indicadores_encuestas_hogares_", pais,"_",anio,".csv",sep = ""), row.names=FALSE)
   rm("data_scl", "data_total","results")
@@ -27,7 +27,7 @@ if (tipo == "encuestas") {
 
 if (tipo=="censos"){
   
-  write.csv(data_total, paste("Outputs/indicadores_censos_hogares_", pais,"_",anio,".csv",sep = ""), row.names=FALSE)
+  write.csv(data_total, paste("Outputs/indicadores_censos_hogares_demographic_", pais,"_",anio,".csv",sep = ""), row.names=FALSE)
   rm("data_scl", "data_total","results")
   gc()
 }
