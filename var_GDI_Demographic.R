@@ -35,8 +35,7 @@ if (tipo == "censos") {
                                           edad_ci >=31 & edad_ci <= 45 ~ "rango_31_45", 
                                           edad_ci >=46 & edad_ci <= 60 ~ "rango_46_60", 
                                           edad_ci >=61 & edad_ci <= 75 ~ "rango_61_75", 
-                                          edad_ci >=76 & edad_ci <= 90 ~ "rango_76_90",
-                                          edad_ci>=91 ~ "rango_91_mas"), 
+                                          edad_ci >=76 ~ "rango_76_mas"), 
           #migration = dplyr::if_else(migrante_ci == 1, "Migrant", 
           #                    dplyr::if_else(migrante_ci == 0, "Non-migrant", NA_character_)),
            sex = dplyr::case_when(
