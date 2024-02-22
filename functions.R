@@ -269,9 +269,18 @@ scl_ratio_decil <- function(.data, .nombre, .condicion1, .condicion2, .group_var
   .condicion1 <- rlang::parse_expr(.condicion1)
   .condicion2 <- rlang::parse_expr(.condicion2)
   
-  value1 = .data %>% filter(!!.condicion1) %>% head(1) %>% select(pc_ytot_ch) %>% pull()
-  value2 = .data %>% filter(!!.condicion2) %>% head(1) %>% select(pc_ytot_ch) %>% pull()
-  value <- c(value1/value2)
+  count <- .data %>% filter(!!.condicion1) %>% count() %>% pull()
+  
+  if (count != 0) {
+    value1 = .data %>% filter(!!.condicion1) %>% head(1) %>% select(pc_ytot_ch) %>% pull()
+    value2 = .data %>% filter(!!.condicion2) %>% head(1) %>% select(pc_ytot_ch) %>% pull()
+    value <- c(value1/value2)
+  }
+  if (count == 0) {
+    value <- NA_real_
+  }
+  
+  
   indicator = c(.nombre)
   level= c(NA_real_)
   se = c(NA_real_)
