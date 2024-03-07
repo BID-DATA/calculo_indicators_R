@@ -189,11 +189,20 @@ if (tipo == "encuestas") {
   
   # Calculate quintiles
   # sum all the values of factor ci where ytot"
+  # Calculate quintiles
+  # sum all the values of factor ci where ytot"
   data_filt <- data_filt %>%
     arrange(pc_ytot_ch,idh_ch) %>%
     mutate(suma1 = ifelse(!is.na(ytot_ch),factor_ci,0),
            suma2 = cumsum(suma1),
-           cumulative_weight_prop = suma2 / sum(suma1)) %>%
+           cumulative_weight_prop = suma2 / sum(suma1, na.rm=TRUE)) 
+  
+  countQuintile <- data_filt %>% 
+    filter(cumulative_weight_prop!=0) %>% 
+    count() %>% pull()
+  
+  if (countQuintile != 0) {
+  data_filt <- data_filt %>%
     mutate(
       quintile = case_when(
         cumulative_weight_prop < 0.20 ~ "quintile_1",
@@ -210,7 +219,7 @@ if (tipo == "encuestas") {
     arrange(pc_ytot_ch,idh_ch) %>%
     mutate(suma1 = ifelse(zona_c==1 & !is.na(ytot_ch),factor_ci,0),
            suma2 = cumsum(suma1),
-           cumulative_weight_prop = suma2 / sum(suma1)) %>%
+           cumulative_weight_prop = suma2 / sum(suma1, na.rm=TRUE)) %>%
     mutate(
       quintile_ci_urban = case_when(
         cumulative_weight_prop < 0.20 & zona_c==1 ~ "quintile_1_urban",
@@ -227,7 +236,7 @@ if (tipo == "encuestas") {
     arrange(pc_ytot_ch,idh_ch) %>%
     mutate(suma1 = ifelse(zona_c==0 & !is.na(ytot_ch),factor_ci,0),
            suma2 = cumsum(suma1),
-           cumulative_weight_prop_rural = suma2 / sum(suma1)) %>%
+           cumulative_weight_prop_rural = suma2 / sum(suma1, na.rm=TRUE)) %>%
     mutate(
       quintile_ci_rural = case_when(
         cumulative_weight_prop_rural < 0.20 & zona_c==0 ~ "quintile_1_rural",
@@ -244,7 +253,7 @@ if (tipo == "encuestas") {
     arrange(pc_ytot_ch,idh_ch) %>%
     mutate(suma1 = ifelse(jefe_ci==1 & !is.na(ytot_ch),factor_ci,0),
            suma2 = cumsum(suma1),
-           cumulative_weight_prop2 = (suma2 / sum(suma1))) %>%
+           cumulative_weight_prop2 = (suma2 / sum(suma1, na.rm=TRUE))) %>%
     mutate(
       quintile_ch = case_when(
         cumulative_weight_prop2 < 0.20 & jefe_ci==1 ~ "quintile_1_ch",
@@ -261,7 +270,7 @@ if (tipo == "encuestas") {
     arrange(pc_ytot_ch,idh_ch) %>%
     mutate(suma1 = ifelse(jefe_ci==1 & !is.na(ytot_ch) & zona_c==1,factor_ci,0),
            suma2 = cumsum(suma1),
-           cumulative_weight_prop2 = (suma2 / sum(suma1))) %>%
+           cumulative_weight_prop2 = (suma2 / sum(suma1, na.rm=TRUE))) %>%
     mutate(
       quintile_ch_urban = case_when(
         cumulative_weight_prop2 < 0.20 & jefe_ci==1 & zona_c==1 ~ "quintile_1_ch_urban",
@@ -278,7 +287,7 @@ if (tipo == "encuestas") {
     arrange(pc_ytot_ch,idh_ch) %>%
     mutate(suma1 = ifelse(jefe_ci==1 & !is.na(ytot_ch) & zona_c==0,factor_ci,0),
            suma2 = cumsum(suma1),
-           cumulative_weight_prop2 = (suma2 / sum(suma1))) %>%
+           cumulative_weight_prop2 = (suma2 / sum(suma1, na.rm=TRUE))) %>%
     mutate(
       quintile_ch_rural = case_when(
         cumulative_weight_prop2 < 0.20 & jefe_ci==1 & zona_c==0 ~ "quintile_1_ch_rural",
@@ -297,7 +306,7 @@ if (tipo == "encuestas") {
     arrange(pc_ytot_ch,idh_ch) %>%
     mutate(suma1 = ifelse(!is.na(pc_ytot_ch),factor_ci,0),
            suma2 = cumsum(suma1),
-           cumulative_weight_prop = suma2 / sum(factor_ci)) %>%
+           cumulative_weight_prop = suma2 / sum(factor_ci, na.rm=TRUE)) %>%
     mutate(
       decile_ci = case_when(
         cumulative_weight_prop < 0.10 ~ 1,
@@ -316,7 +325,7 @@ if (tipo == "encuestas") {
   
   data_filt <- data_filt %>% group_by(decile_ci) %>%
     mutate(
-      isminv2 = min(pc_ytot_ch, na.rm = T)
+      isminv2 = ifelse(!is.na(pc_ytot_ch) & !is.infinite(pc_ytot_ch) ,min(pc_ytot_ch, na.rm = T),NA_real_)
     ) %>%
     ungroup() %>%
     mutate(percentil_points = case_when(
@@ -325,9 +334,25 @@ if (tipo == "encuestas") {
       decile_ci == 9 & (isminv2 == pc_ytot_ch) ~ 90,
       TRUE ~ NA_real_
     ))
-  data_filt <- data_filt %>% rename(isoalpha3 = pais_c,
-    year = anio_c)
+
+  }
   
+  if (countQuintile == 0) {
+    
+    data_filt <- data_filt %>%
+      mutate(quintile=NA_real_,
+             quintile_ci_urban = NA_real_,
+             quintile_ci_rural = NA_real_,
+             quintile_ch = NA_real_,
+             quintile_ch_urban = NA_real_,
+             quintile_ch_rural = NA_real_,
+             percentil_points = 0
+      )
+    
+  }
+  
+  data_filt <- data_filt %>% rename(isoalpha3 = pais_c,
+                                    year = anio_c)
 }
 
 

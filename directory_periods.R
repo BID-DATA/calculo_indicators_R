@@ -31,7 +31,7 @@ survey <- planificacionSurveysPivot %>%
           filter(`País`== pais & `year`== anio & availability ==1) %>% 
           pull(Encuesta)
 
-base <- paste("//sdssrv03//surveys//harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")
+base <- paste("Z://harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")
 # return database address
 return(base)
 
