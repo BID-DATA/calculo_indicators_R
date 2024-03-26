@@ -96,6 +96,24 @@ if (tipo == "encuestas") {
   rm("data", "data_aux", "data_scl", "data_total")
   gc()
 
+# Creating survey design object
+intoSurveyDesignObject <- function(.data) {
+    if (!all(is.na(.data$upm_ci)) & !all(is.na(.data$estrato_ci)) ) {
+      .data<- .data %>%
+        as_survey_design(upm_ci, strata = estrato_ci, weight = factor_ch,
+                         nest = TRUE)
+    } else if( !all(is.na(.data$upm_ci)) & all(is.na(.data$estrato_ci)) ){
+      .data<- .data %>%
+        as_survey_design(upm_ci, weight = factor_ch)
+    }
+    else{ 
+      .data<- .data %>%
+        as_survey_design(weight = factor_ch)
+    }
+    return(.data)
+  }
+
+  
 # Read all functions needed for computation 
 message(paste("Preparing calculations for parallelization ",pais,": ", anio))
 source("functions.R")
@@ -122,30 +140,94 @@ if (tipo=="censos"){
   }
   num_cores <- 3
 }
+num_cores <- 3
 
-  # number of cores to use, often set to one less than the total available
-cl <- makeCluster(num_cores)
-
-# Export data, indicator definitions and the necessary functions to the cluster
-clusterExport(cl, c("data_filt", "indicator_definitions", "scl_pct","scl_pctv2","scl_ratio_decil", "scl_mean","scl_gini","calculate_indicators", "evaluatingFilter", "drop_na"))
-
-# Load necessary packages on each node of the cluster
-clusterEvalQ(cl, {
-  library(magrittr)
-  library(dplyr)
-  library(rlang)
-})
-
-is_haven_labelled <- function(x) {
-  inherits(x, "haven_labelled")
-}
-
-# Convert all haven_labelled columns to numeric
-data_filt <- data_filt %>%
-  mutate(across(where(is_haven_labelled), as.numeric))
-message(paste("Calculating indicators ",pais,": ", anio))
 # Call the function in parallel
-results <- parLapply(cl, 1:nrow(indicator_definitions), calculate_indicators, data_filt, indicator_definitions)
+# read the indicators definitions in the csv
+if (tipo=="encuestas"){
+  data_filtSVD<-   intoSurveyDesignObject(data_filt)
+  # number of cores to use, often set to one less than the total available
+  cl <- makeCluster(num_cores)
+
+  ### for some reason there's error in serealization
+  
+  # Export data, indicator definitions and the necessary functions to the cluster
+  # it{s definetely in the new data object that we created maybe I should convert it laters}
+  clusterExport(cl, c("data_filt","data_filtSVD", "indicator_definitions", "scl_pct","scl_pctv2","scl_ratio_decil", "scl_mean","scl_gini","calculate_indicators", "evaluatingFilter", "drop_na"))
+  
+  # Load necessary packages on each node of the cluster
+  clusterEvalQ(cl, {
+    library(magrittr)
+    library(dplyr)
+    library(rlang)
+  })
+  
+  is_haven_labelled <- function(x) {
+    inherits(x, "haven_labelled")
+  }
+  
+  # Convert all haven_labelled columns to numeric
+  data_filt <- data_filt %>%
+    mutate(across(where(is_haven_labelled), as.numeric))
+  message(paste("Calculating indicators ",pais,": ", anio))
+  results <- parLapply(cl, 1:nrow(indicator_definitions), calculate_indicators, data_filt,data_filtSVD, indicator_definitions)
+}
+if (tipo=="censos"){
+    # number of cores to use, often set to one less than the total available
+  cl <- makeCluster(num_cores)
+  
+  # Export data, indicator definitions and the necessary functions to the cluster
+  clusterExport(cl, c("data_filt", "indicator_definitions", "scl_pct","scl_pctv2","scl_ratio_decil", "scl_mean","scl_gini","calculate_indicators", "evaluatingFilter", "drop_na"))
+  
+  # Load necessary packages on each node of the cluster
+  clusterEvalQ(cl, {
+    library(magrittr)
+    library(dplyr)
+    library(rlang)
+  })
+  
+  is_haven_labelled <- function(x) {
+    inherits(x, "haven_labelled")
+  }
+  
+  # Convert all haven_labelled columns to numeric
+  data_filt <- data_filt %>%
+    mutate(across(where(is_haven_labelled), as.numeric))
+  message(paste("Calculating indicators ",pais,": ", anio))
+  results <- parLapply(cl, 1:nrow(indicator_definitions), calculate_indicators, data_filt,NaN, indicator_definitions)
+}
+#### adding unnecesary code:
+# .condicion1 <- rlang::parse_expr("sexo_ci==1")
+# .condicion2 <- rlang::parse_expr("npers==1")
+# 
+# data_aux <- data_filtSVD %>%
+# dplyr::summarize(proportion = survey_ratio(eval(.condicion1), eval(.condicion2),vartype = c("cv","se"),na.rm=TRUE),
+#                  indicator = ".nombre",
+#                  n =sum(eval(.condicion2))) %>%
+#   rename(
+#     value = proportion,
+#     cv = proportion_cv,
+#     se = proportion_se,
+#     sample = n
+#   )
+# .condicion1 <- rlang::parse_expr("sexo_ci==1")
+# .condicion2 <- rlang::parse_expr("npers==1")
+# .group_vars <- "isoalpha3,year"
+# disaggregation <- strsplit(.group_vars, ",")[[1]]
+# data_aux <- data_filtSVD %>%
+#   dplyr::group_by_at(disaggregation) %>%
+#   dplyr::summarize(proportion = survey_ratio(eval(.condicion1), eval(.condicion2),vartype = c("cv","se"),na.rm=TRUE),
+#                    indicator = ".nombre",
+#                    n =sum(eval(.condicion2))) %>%
+#   rename(
+#     value = proportion,
+#     cv = proportion_cv,
+#     se = proportion_se,
+#     sample = n
+#   )%>%
+#   dplyr::ungroup()
+
+
 
 rm("data_filt")
 gc()
