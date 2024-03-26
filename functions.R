@@ -37,24 +37,26 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   if (!is.null(.group_vars)) {
     data_aux <- .data %>%
       dplyr::group_by_at(.group_vars) %>%
-      dplyr::summarise(
-        value = sum(factor_ci[!!.condicion1], na.rm=TRUE) / sum(factor_ci[!!.condicion2], na.rm=TRUE),
-        indicator = .nombre,
-        se = sqrt(value * (1 - value) / sum(factor_ci[!!.condicion2], na.rm=TRUE)),
-        cv = se / value * 100,
-        level =  sum(factor_ci * !!.condicion1, na.rm=TRUE),
-        sample = sum(!!.condicion2, na.rm=TRUE)
-      ) %>% 
+      dplyr::summarize(proportion = survey_ratio(eval(.condicion1), eval(.condicion2),vartype = c("cv","se"),na.rm=TRUE),
+                       indicator = .nombre,
+                       n =sum(eval(.condicion2))) %>%
+      rename(
+        value = proportion,
+        cv = proportion_cv,
+        se = proportion_se,
+        sample = n
+      )%>% 
       dplyr::ungroup()
   } else {
     data_aux <- .data %>%
-      dplyr::summarise(
-        value = sum(factor_ci[!!.condicion1], na.rm=TRUE) / sum(factor_ci[!!.condicion2], na.rm=TRUE),
-        indicator = .nombre,
-        se = sqrt(value * (1 - value) / sum(factor_ci[!!.condicion2], na.rm=TRUE)),
-        cv = se / value * 100,
-        level =  sum(factor_ci * !!.condicion1, na.rm=TRUE),
-        sample = sum(!!.condicion2, na.rm=TRUE)
+      dplyr::summarize(proportion = survey_ratio(eval(.condicion1), eval(.condicion2),vartype = c("cv","se"),na.rm=TRUE),
+                       indicator = .nombre,
+                       n =sum(eval(.condicion2))) %>%
+      rename(
+        value = proportion,
+        cv = proportion_cv,
+        se = proportion_se,
+        sample = n
       )
   }
   
@@ -359,7 +361,7 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   return(data_aux)
 }
 
-calculate_indicators <- function(i, data, indicator_definitions) {
+calculate_indicators <- function(i, data,dataSVDesign, indicator_definitions) {
   
   # Extract each component of the current indicator definition
   ind <- indicator_definitions[i, ]
@@ -394,8 +396,14 @@ calculate_indicators <- function(i, data, indicator_definitions) {
     # If the condition for exclusion is not met, calculate the indicator
     if(!conditionDesaggregation) {
       if(aggregation_function == "pct") {
-        res <- scl_pct(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+        if(!is.nan(dataSVDesign)){
+        res <- scl_pct(dataSVDesign, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
         res_list[[j]] <- res
+        }
+        else { 
+          res <- scl_pct(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+          res_list[[j]] <- res
+          }
       } else if(aggregation_function == "pctv2") {
         res <- scl_pctv2(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
         res_list[[j]] <- res         
