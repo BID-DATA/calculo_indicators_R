@@ -235,8 +235,8 @@ if (tipo == "censos") {
   #8. Terciaria asistencia
   if(pais=="COL"|pais=="CRI"|pais=="GTM"|pais=="GUY"|pais=="JAM"|pais=="NIC"|pais=="PER"|pais=="VEN") {
     data_filt <- data_filt %>% 
-      mutate(age_tert_c = case_when((edad_ci >= 17 & edad_ci <= 23) ~ 1, 
-                                    !(edad_ci >= 17 & edad_ci <= 23) ~ 0,
+      mutate(age_tert_c = case_when((edad_ci >= 17 & edad_ci <= 24) ~ 1, 
+                                    !(edad_ci >= 17 & edad_ci <= 24) ~ 0,
                                     TRUE ~ NA_real_),
              asis_net_tert_c = case_when(aedu_ci > 11 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
                                          TRUE ~ NA_real_),
@@ -246,8 +246,8 @@ if (tipo == "censos") {
     
   } else if(pais=="HTI"|pais=="SUR"|pais=="TTO") {
     data_filt <- data_filt %>% 
-      mutate(age_tert_c = case_when((edad_ci >= 19 & edad_ci <= 23) ~ 1,
-                                    !( edad_ci >= 19 & edad_ci <= 23) ~ 0,
+      mutate(age_tert_c = case_when((edad_ci >= 19 & edad_ci <= 24) ~ 1,
+                                    !( edad_ci >= 19 & edad_ci <= 24) ~ 0,
                                     TRUE ~ NA_real_),
              asis_net_tert_c = case_when(aedu_ci > 13 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
                                          TRUE ~ NA_real_),
@@ -257,8 +257,8 @@ if (tipo == "censos") {
     
   } else if(pais=="BRB") {
     data_filt <- data_filt %>% 
-      mutate(age_tert_c = case_when((edad_ci >= 16 & edad_ci <= 23)~ 1, 
-                                    !(edad_ci >= 16 & edad_ci <= 23)~ 0,
+      mutate(age_tert_c = case_when((edad_ci >= 16 & edad_ci <= 24)~ 1, 
+                                    !(edad_ci >= 16 & edad_ci <= 24)~ 0,
                                     TRUE ~ NA_real_),
              asis_net_tert_c = case_when(aedu_ci > 11 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
                                          TRUE ~ NA_real_),
@@ -268,8 +268,8 @@ if (tipo == "censos") {
     
   }else {
     data_filt <- data_filt %>% 
-      mutate(age_tert_c = case_when((edad_ci >= 18 & edad_ci <= 23)~ 1,
-                                    !(edad_ci >= 18 & edad_ci <= 23)~ 0,
+      mutate(age_tert_c = case_when((edad_ci >= 18 & edad_ci <= 24)~ 1,
+                                    !(edad_ci >= 18 & edad_ci <= 24)~ 0,
                                     TRUE ~ NA_real_),
              asis_net_tert_c = case_when(aedu_ci > 12 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
                                          TRUE ~ NA_real_),
@@ -579,51 +579,8 @@ if (tipo == "encuestas") {
       )
       )
   }
-  #8. Terciaria asistencia
-  if(pais=="COL"|pais=="CRI"|pais=="GTM"|pais=="GUY"|pais=="JAM"|pais=="NIC"|pais=="PER"|pais=="VEN") {
-    data_filt <- data_filt %>% 
-      mutate(age_tert_c = case_when((edad_ci >= 17 & edad_ci <= 23) ~ 1, 
-                                    !(edad_ci >= 17 & edad_ci <= 23) ~ 0,
-                                    TRUE ~ NA_real_),
-             asis_net_tert_c = case_when(aedu_ci > 11 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
-                                         TRUE ~ NA_real_),
-             asis_tert_c = case_when(aedu_ci > 11 & asiste_ci == 1 & edad_ci >= 6 ~ 1,
-                                     TRUE ~ NA_real_)
-      )
-    
-  } else if(pais=="HTI"|pais=="SUR"|pais=="TTO") {
-    data_filt <- data_filt %>% 
-      mutate(age_tert_c = case_when((edad_ci >= 19 & edad_ci <= 23) ~ 1,
-                                    !( edad_ci >= 19 & edad_ci <= 23) ~ 0,
-                                    TRUE ~ NA_real_),
-             asis_net_tert_c = case_when(aedu_ci > 13 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
-                                         TRUE ~ NA_real_),
-             asis_tert_c = case_when(aedu_ci > 13 & asiste_ci == 1 & edad_ci >= 6 ~ 1,
-                                     TRUE ~ NA_real_)
-      )
-    
-  } else if(pais=="BRB") {
-    data_filt <- data_filt %>% 
-      mutate(age_tert_c = case_when((edad_ci >= 16 & edad_ci <= 23)~ 1, 
-                                    !(edad_ci >= 16 & edad_ci <= 23)~ 0,
-                                    TRUE ~ NA_real_),
-             asis_net_tert_c = case_when(aedu_ci > 11 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
-                                         TRUE ~ NA_real_),
-             asis_tert_c = case_when(aedu_ci > 11 & asiste_ci == 1 & edad_ci >= 6 ~ 1,
-                                     TRUE ~ NA_real_)
-      )
-    
-  }else {
-    data_filt <- data_filt %>% 
-      mutate(age_tert_c = case_when((edad_ci >= 18 & edad_ci <= 23)~ 1,
-                                    !(edad_ci >= 18 & edad_ci <= 23)~ 0,
-                                    TRUE ~ NA_real_),
-             asis_net_tert_c = case_when(aedu_ci > 12 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
-                                         TRUE ~ NA_real_),
-             asis_tert_c = case_when(aedu_ci > 12 & asiste_ci == 1 & edad_ci >= 6 ~ 1,
-                                     TRUE ~ NA_real_)
-      )
-  }
+
+
   #9. Edusm
   if((pais=="BRB"|pais=="COL"|pais=="CRI"|pais=="GTM"|pais=="GUY"|pais=="HND"|pais=="JAM"|pais=="NIC"|pais=="PER"|pais=="SLV"|pais=="VEN")) {
     data_filt <- data_filt %>% 
@@ -646,34 +603,103 @@ if (tipo == "encuestas") {
                                    TRUE ~ NA_real_)
       )
   }
+  # 10 leavers
+  if(pais=="SUR"|pais=="HTI") {
+    data_filt <- data_filt %>% 
+      mutate(leavers = case_when((aedu_ci<13) & (asiste_ci==0) ~ 1,
+                                 TRUE ~ NA_real_)
+      )
+    
+  } else if(pais=="BRB"|pais=="COL"|pais=="CRI"|pais=="GUY"|pais=="SLV"|pais=="GTM"|pais=="HND"|pais=="JAM"|pais=="NIC"|pais=="PER"|pais=="VEN") {
+    data_filt <- data_filt %>% 
+      mutate(leavers = case_when((aedu_ci<11) & (asiste_ci==0) ~ 1,
+                                 TRUE ~ NA_real_)
+      )
+    
+  }else {
+    data_filt <- data_filt %>% 
+      mutate(leavers = case_when((aedu_ci<12) & (asiste_ci==0) ~ 1,
+                                   TRUE ~ NA_real_)
+      )
+  }
+  # 11 t_cond_secundaria
+  if(pais=="SUR"|pais=="HTI") {
+    data_filt <- data_filt %>% 
+      mutate(t_cond_secundaria = case_when((aedu_ci>=13) & (age_term_s_c == 1) ~ 1,
+                                 TRUE ~ NA_real_)
+      )
+    
+  } else if(pais=="BRB"|pais=="COL"|pais=="CRI"|pais=="GUY"|pais=="SLV"|pais=="GTM"|pais=="HND"|pais=="JAM"|pais=="NIC"|pais=="PER"|pais=="VEN") {
+    data_filt <- data_filt %>% 
+      mutate(t_cond_secundaria = case_when((aedu_ci>=11) & (age_term_s_c == 1)  ~ 1,
+                                 TRUE ~ NA_real_)
+      )
+    
+  }else {
+    data_filt <- data_filt %>% 
+      mutate(t_cond_secundaria = case_when((aedu_ci>=12) & (age_term_s_c == 1) ~ 1,
+                                 TRUE ~ NA_real_)
+      )
+  }
+  # 11 t_cond_primaria
+  if(pais=="BRA"|pais=="COL") {
+    data_filt <- data_filt %>% 
+      mutate(t_cond_primaria = case_when((aedu_ci>=5) & (age_term_p_c == 1) ~ 1,
+                                           TRUE ~ NA_real_)
+      )
+    
+  } else if(pais=="TTO") {
+    data_filt <- data_filt %>% 
+      mutate(t_cond_primaria = case_when((aedu_ci>=7) & (age_term_p_c == 1)  ~ 1,
+                                           TRUE ~ NA_real_)
+      )
+    
+  }else {
+    data_filt <- data_filt %>% 
+      mutate(t_cond_primaria = case_when((aedu_ci>=6) & (age_term_p_c == 1) ~ 1,
+                                           TRUE ~ NA_real_)
+      )
+  }
   
+  # 12 age_tert_c, asis_net_tert_c, asis_tert_c
   data_filt <- data_filt %>% 
-    mutate(leavers = case_when(
-      (edupi_ci == 1 | edupc_ci == 1 | edus1i_ci == 1 | edus1c_ci == 1) & (asiste_ci == 0) ~ 1,
-      TRUE ~ NA_real_
-    ),
+    mutate(age_tert_c = case_when((edad_ci >= 18 & edad_ci <= 24) ~ 1, 
+                                  !(edad_ci >= 18 & edad_ci <= 24) ~ 0,
+                                  TRUE ~ NA_real_))
+           
+  if(pais=="SUR"|pais=="HTI") {
+    data_filt <- data_filt %>% 
+      mutate(asis_net_tert_c = case_when( asis_net_tert_c = case_when(aedu_ci > 13 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
+                                                                       TRUE ~ NA_real_),
+                                           asis_tert_c = case_when(aedu_ci > 13 & asiste_ci == 1 & edad_ci >= 17 ~ 1,
+                                                                   TRUE ~ NA_real_))
+      )
     
-    tprimaria = case_when(
-      (edupc_ci == 1 | edusi_ci == 1 | edusc_ci == 1 | eduscm_ci == 1) ~ 1,
-      TRUE ~ NA_real_
-    ),
+  } else if(pais=="BRB"|pais=="COL"|pais=="CRI"|pais=="GUY"|pais=="SLV"|pais=="GTM"|pais=="HND"|pais=="JAM"|pais=="NIC"|pais=="PER"|pais=="VEN") {
+    data_filt <- data_filt %>% 
+      mutate( asis_net_tert_c = case_when(aedu_ci > 11 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
+                                          TRUE ~ NA_real_),
+              asis_tert_c = case_when(aedu_ci > 11 & asiste_ci == 1 & edad_ci >= 17 ~ 1,
+                                      TRUE ~ NA_real_)
+      )
     
-    
-    tsecundaria = case_when(
-      (edusc_ci == 1 | eduscm_ci == 1) ~ 1,
-      TRUE ~ NA_real_
-    ),
-    
-    t_cond_primaria   = case_when(
-      (tprimaria == 1   & age_term_p_c == 1) ~ 1,
-      TRUE ~ NA_real_
-    ),
-    
-    t_cond_secundaria = case_when(
-      (tsecundaria == 1 & age_term_s_c == 1) ~ 1,
-      TRUE ~ NA_real_
-    ),
-    
+  }else {
+    data_filt <- data_filt %>% 
+      mutate( asis_net_tert_c = case_when(aedu_ci > 12 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
+                                          TRUE ~ NA_real_),
+              asis_tert_c = case_when(aedu_ci > 12 & asiste_ci == 1 & edad_ci >= 17 ~ 1,
+                                      TRUE ~ NA_real_)
+      )
+  }
+ # age_tert_fin
+  data_filt <- data_filt %>% 
+    mutate( age_tert_fin = case_when((edad_ci > 24) & (edad_ci <36) ~ 1,
+                                        TRUE ~ NA_real_)
+    )
+  #
+
+  data_filt <- data_filt %>% 
+    mutate(
     grupo_etario = case_when(edad_ci >= 4 & edad_ci <= 5 ~ "age_4_5",
                              edad_ci >= 6 & edad_ci <= 11 ~ "age_6_11",
                              edad_ci >= 12 & edad_ci <= 14 ~ "age_12_14",

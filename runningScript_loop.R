@@ -10,7 +10,7 @@ library(multidplyr)
 library(reldist)
 options(scipen = 999)
 # select between "censos"/"encuestas"
-tipo <- "censos"
+tipo <- "encuestas"
 # select between country or ine01 for surveys and country or geolev1 for census
 geoLevel <- "geolev1"
 if (tipo=="encuestas"){
