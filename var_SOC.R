@@ -128,7 +128,7 @@ if (tipo == "encuestas") {
            pob_sfd = if_else(sexo_ci == 2 | afroind_ci == 1 | afroind_ci == 2 | dis_ci == 1, 1, 0),
            pob18_ci = as.numeric(edad_ci <= 18),
            pob65_ci = as.numeric(edad_ci >= 65),
-           miembros_ci = as.numeric(miembros_ci == 1),
+           miembros_ci = as.numeric(1),
            ytot_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci, ynlm_ci, ynlnm_ci), na.rm = TRUE)),
            ytot_ci = ifelse(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci),
            yallsr18 = if_else(edad_ci >= 18, ytot_ci, NA_real_),
@@ -139,7 +139,8 @@ if (tipo == "encuestas") {
                                edad_ci>=65 & edad_ci<99 ~"65+", 
                                TRUE ~NA_character_)) %>%
     group_by(idh_ch) %>%
-    mutate(ytot_ch = if_else(miembros_ci == 1, sum(ytot_ci, na.rm = TRUE), NA_real_),
+    mutate(nmiembros_ch = sum(miembros_ci, na.rm = TRUE),
+           ytot_ch = if_else(miembros_ci == 1, sum(ytot_ci, na.rm = TRUE), NA_real_),
            ytot_ch = pmax(0, ytot_ch),
            hhyallsr = if_else(miembros_ci == 1, sum(yallsr18, na.rm = TRUE), NA_real_),
            hhyallsr = pmax(0, hhyallsr),
