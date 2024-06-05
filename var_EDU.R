@@ -669,10 +669,10 @@ if (tipo == "encuestas") {
            
   if(pais=="SUR"|pais=="HTI") {
     data_filt <- data_filt %>% 
-      mutate(asis_net_tert_c = case_when( asis_net_tert_c = case_when(aedu_ci >= 13 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
+      mutate( asis_net_tert_c = case_when(aedu_ci >= 13 & asiste_ci == 1 & age_tert_c == 1 ~ 1,
                                                                        TRUE ~ NA_real_),
                                            asis_tert_c = case_when(aedu_ci >= 13 & asiste_ci == 1 & edad_ci >= 17 ~ 1,
-                                                                   TRUE ~ NA_real_))
+                                                                   TRUE ~ NA_real_)
       )
     
   } else if(pais=="BRB"|pais=="COL"|pais=="CRI"|pais=="GUY"|pais=="SLV"|pais=="GTM"|pais=="HND"|pais=="JAM"|pais=="NIC"|pais=="PER"|pais=="VEN") {
