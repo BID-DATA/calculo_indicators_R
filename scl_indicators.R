@@ -72,25 +72,6 @@ source("var_SOC.R")
 
 #### Join final data with intermediate variables #####
 
-if (tipo == "censos") {
-  
-  # Make sure the joining columns form a unique identifier in the right datasets
-  data_filt <- data_filt %>% 
-    distinct(across(c("region_BID_c", "isoalpha3","estrato_ci", "zona_c","geolev1",
-                      "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
-  
-}
-
-if (tipo == "encuestas") {
-  
-  # Make sure the joining columns form a unique identifier in the right datasets
-  data_filt <- data_filt %>% 
-    distinct(across(c("region_BID_c", "isoalpha3","estrato_ci", "zona_c","ine01",
-                      "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
-
-  
-}
-
 # Remove data we do not need and free memory
   rm("variables_encuestas", "varlist_censos", "variables_censos", "required_vars","missing_vars")
   rm("data", "data_aux", "data_scl", "data_total")
