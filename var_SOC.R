@@ -139,10 +139,8 @@ if (tipo == "encuestas") {
                                edad_ci>=65 & edad_ci<99 ~"65+", 
                                TRUE ~NA_character_)) %>%
     group_by(idh_ch) %>%
-    mutate(ytot_ch = if_else(miembros_ci == 1, sum(ytot_ci, na.rm = TRUE), NA_real_),
-           ytot_ch = pmax(0, ytot_ch),
+    mutate(ytot_ch = sum(ytot_ci*(miembros_ci == 1), na.rm = TRUE),
            hhyallsr = if_else(miembros_ci == 1, sum(yallsr18, na.rm = TRUE), NA_real_),
-           hhyallsr = pmax(0, hhyallsr),
            ywomen = sum(yallsr18[sexo_ci == 2], na.rm = TRUE),
            hhywomen = max(ywomen, na.rm = TRUE),
            shareylmfem_ch = hhywomen / hhyallsr,
