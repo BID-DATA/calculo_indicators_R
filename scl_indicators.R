@@ -35,8 +35,7 @@
   }
   
 if (tipo == "encuestas") {
-  # to do si no encuentra las variables ponlas en missing
-  
+
   #Keep only needed variables
   variables_encuestas <- readxl::read_xlsx("Inputs/D.1.1.4 Diccionario microdatos encuestas de hogares.xlsx") %>% 
     filter(!(Variable %in% c("region_ci", "afroind_ano_ci", "atención_ci")))
@@ -70,26 +69,6 @@ source("var_GDI.R")
 source("var_SOC.R")
 
 
-#### Join final data with intermediate variables #####
-
-if (tipo == "censos") {
-  
-  # Make sure the joining columns form a unique identifier in the right datasets
-  data_filt <- data_filt %>% 
-    distinct(across(c("region_BID_c", "isoalpha3","estrato_ci", "zona_c","geolev1",
-                      "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
-  
-}
-
-if (tipo == "encuestas") {
-  
-  # Make sure the joining columns form a unique identifier in the right datasets
-  data_filt <- data_filt %>% 
-    distinct(across(c("region_BID_c", "isoalpha3","estrato_ci", "zona_c","ine01",
-                      "relacion_ci", "idh_ch", "idp_ci", "factor_ci", "factor_ch")), .keep_all = TRUE)
-
-  
-}
 
 # Remove data we do not need and free memory
   rm("variables_encuestas", "varlist_censos", "variables_censos", "required_vars","missing_vars")
@@ -192,6 +171,7 @@ data_total <- left_join(data_total, indicator_definitionsv2 ,join_by("indicator"
 
 data_total <- data_total %>% mutate(
   muestra_baja = ifelse(!is.na(sample),as.numeric(sample<30),NA_real_),
+  se = se * 100,
   se_fuera05 = ifelse(!is.na(se),as.numeric(aggregation_function=="pct"&(value<=0.5 & se>(value^(2/3))/9)),NA_real_),
   se_fuera = ifelse(!is.na(se),as.numeric(aggregation_function=="pct"&value>0.5 & (se>((1-value)^(2/3))/9)),NA_real_),
   quality_check = NA_real_,
