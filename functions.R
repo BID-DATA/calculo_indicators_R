@@ -28,7 +28,7 @@ evaluatingFilter <- function(x, variable) {
 
 # Percentage function 
 
-scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
+scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars, .disaggregation_transformation) {
   
   # Convert conditions to expressions
   .condicion1 <- rlang::parse_expr(.condicion1)
@@ -60,29 +60,15 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   
   
   # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
-  if('age_lmk' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_lmk)
-  } else if('age_scl' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_scl)
-  } else if('age_15_64_lmk' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_15_64_lmk)
-  } else if('age_15_29_lmk' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_15_29_lmk)
-  }
-  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
-  if('quintile_ci' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ci)
-  } else if('quintile_ci_urban' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ci_urban)
-  } else if('quintile_ci_rural' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ci_rural)
-  } else if('quintile_ch' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ch)
-  }else if('quintile_ch_urban' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ch_urban)
-  }else if('quintile_ch_rural' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ch_rural)
-  }
+  .disaggregation_transformation$RenameList <- .disaggregation_transformation$desagregaciones %in% .group_vars
+  if(sum(.disaggregation_transformation$RenameList, na.rm=TRUE)>0){
+  .disaggregation_transformation <- .disaggregation_transformation %>% filter(RenameList)
+  
+  for (j in 1:nrow(.disaggregation_transformation)) {
+    newName<- .disaggregation_transformation$columnaOutput[j]
+    oldName<- .disaggregation_transformation$desagregaciones[j]
+    data_aux <- data_aux %>% dplyr::rename(newName = oldName)
+  }}
   
   # Add disaggregation columns if not already present
   for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
@@ -101,7 +87,7 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
 
 # Percentage function 2
 
-scl_pctv2 <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
+scl_pctv2 <- function(.data, .nombre, .condicion1, .condicion2, .group_vars, .disaggregation_transformation) {
   
   # Convert conditions to expressions
   .condicion1 <- rlang::parse_expr(.condicion1)
@@ -141,30 +127,16 @@ scl_pctv2 <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   
   
   # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
-  if('age_lmk' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_lmk)
-  } else if('age_scl' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_scl)
-  } else if('age_15_64_lmk' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_15_64_lmk)
-  } else if('age_15_29_lmk' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_15_29_lmk)
-  }
+  .disaggregation_transformation$RenameList <- .disaggregation_transformation$desagregaciones %in% .group_vars
   
-  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
-  if('quintile_ci' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ci)
-  } else if('quintile_ci_urban' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ci_urban)
-  } else if('quintile_ci_rural' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ci_rural)
-  } else if('quintile_ch' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ch)
-  }else if('quintile_ch_urban' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ch_urban)
-  }else if('quintile_ch_rural' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ch_rural)
-  }
+  if(sum(.disaggregation_transformation$RenameList, na.rm=TRUE)>0){
+    .disaggregation_transformation <- .disaggregation_transformation %>% filter(RenameList)
+    
+    for (j in 1:nrow(.disaggregation_transformation)) {
+      newName<- .disaggregation_transformation$columnaOutput[j]
+      oldName<- .disaggregation_transformation$desagregaciones[j]
+      data_aux <- data_aux %>% dplyr::rename(newName = oldName)
+    }}
   
   # Add disaggregation columns if not already present
   for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
@@ -182,7 +154,7 @@ scl_pctv2 <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
 }
 
 # Mean function 
-scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
+scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars, .disaggregation_transformation) {
   
   # Convert conditions to expressions
   .condicion <- rlang::parse_expr(.condicion)
@@ -215,36 +187,16 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
   }
   
   # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
-  if('age_lmk' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_lmk)
-  }
+  .disaggregation_transformation$RenameList <- .disaggregation_transformation$desagregaciones %in% .group_vars
   
-  if('age_scl' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_scl)
-  }
-  
-  if('age_15_64_lmk' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_15_64_lmk)
-  }
-  
-  if('age_15_29_lmk' %in% .group_vars){
-    data_aux <- data_aux %>% rename(age = age_15_29_lmk)
-  }
-
-  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
-  if('quintile_ci' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ci)
-  } else if('quintile_ci_urban' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ci_urban)
-  } else if('quintile_ci_rural' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ci_rural)
-  } else if('quintile_ch' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ch)
-  }else if('quintile_ch_urban' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ch_urban)
-  }else if('quintile_ch_rural' %in% .group_vars){
-    data_aux <- data_aux %>% rename(quintile = quintile_ch_rural)
-  }
+  if(sum(.disaggregation_transformation$RenameList, na.rm=TRUE)>0){
+    .disaggregation_transformation <- .disaggregation_transformation %>% filter(RenameList)
+    
+    for (j in 1:nrow(.disaggregation_transformation)) {
+      newName<- .disaggregation_transformation$columnaOutput[j]
+      oldName<- .disaggregation_transformation$desagregaciones[j]
+      data_aux <- data_aux %>% dplyr::rename(newName = oldName)
+    }}
   
   # Add disaggregation columns if not already present
   for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
@@ -263,7 +215,7 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
 
 # Ratio decile 
 
-scl_ratio_decil <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
+scl_ratio_decil <- function(.data, .nombre, .condicion1, .condicion2, .group_vars, .disaggregation_transformation) {
   
   # Convert conditions to expressions
   .condicion1 <- rlang::parse_expr(.condicion1)
@@ -359,7 +311,7 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   return(data_aux)
 }
 
-calculate_indicators <- function(i, data, indicator_definitions) {
+calculate_indicators <- function(i, data, indicator_definitions,disaggregation_transformation) {
   
   # Extract each component of the current indicator definition
   ind <- indicator_definitions[i, ]
@@ -394,20 +346,20 @@ calculate_indicators <- function(i, data, indicator_definitions) {
     # If the condition for exclusion is not met, calculate the indicator
     if(!conditionDesaggregation) {
       if(aggregation_function == "pct") {
-        res <- scl_pct(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+        res <- scl_pct(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation,disaggregation_transformation)
         res_list[[j]] <- res
       } else if(aggregation_function == "pctv2") {
-        res <- scl_pctv2(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+        res <- scl_pctv2(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation,disaggregation_transformation)
         res_list[[j]] <- res         
       } else if(aggregation_function == "mean") {
-        res <- scl_mean(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+        res <- scl_mean(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation,disaggregation_transformation)
         res_list[[j]] <- res
       }
           else if(aggregation_function == "gini") {
-          res <- scl_gini(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+          res <- scl_gini(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation,disaggregation_transformation)
           res_list[[j]] <- res
     } else if(aggregation_function == "ratio_decil") {
-      res <- scl_ratio_decil(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+      res <- scl_ratio_decil(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation,disaggregation_transformation)
       res_list[[j]] <- res
     }
     }
