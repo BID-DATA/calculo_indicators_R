@@ -192,14 +192,6 @@ if (tipo=="censos"){
   data_total <- as.data.frame(apply(data_total,2,as.character))
 }
 
-# converting columns to string to substitute NA with ""
-data_total <- data_total %>%
-  mutate(value = as.character(value),
-         level = as.character(level),
-         se = as.character(se),
-         cv = as.character(cv),
-         sample = as.character(sample))
-
 end_time <- Sys.time() 
 
 # Now calculate the difference
