@@ -19,7 +19,7 @@ available_years <- read.csv("Inputs/running_survey.csv") %>%
 
 if (tipo=="censos"){
   available_years <- read.csv("Inputs/running_census.csv") %>% 
-    filter(availability==1&person=="David")
+    filter(availability==1&person=="censos")
 }
 # if needed you can run by chunks of countries here
 #"ARG",   "CHL", "BLZ", "BRA", "COL", "CRI", "ECU", "GUY", "HTI",  "PAN", "PRY", "SUR", "URY"
