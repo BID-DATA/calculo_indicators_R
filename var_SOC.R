@@ -53,7 +53,7 @@ if (tipo == "censos") {
            shareylmfem_ch = hhywomen / hhyallsr,
            perceptor_ci = if_else(ytot_ci > 0, sum(miembros_ci, na.rm = TRUE), NA_real_),
            dis_ch = as.numeric(sum(dis_ci) > 0),
-           perceptor_ch = suppressWarnings(max(perceptor_ci, na.rm = TRUE))) %>%
+           perceptor_ch = sum(as.numeric(ytot_ci > 0 & miembros_ci>0))) %>%
     ungroup() %>%
     # Mutate to compute additional variables
     mutate(
