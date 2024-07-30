@@ -40,7 +40,7 @@ return(base)
 
 if (tipo == "censos"){
 
-base <- paste("Z:/census/clean",pais,"/", pais,"_",anio, "_censusBID.dta",sep = "")  
+base <- paste("Z://census//clean//",pais,"//",pais,"_",anio,"_censusBID.dta",sep = "")  
 
 }
 }
