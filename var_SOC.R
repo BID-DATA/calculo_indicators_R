@@ -219,11 +219,11 @@ if (tipo == "encuestas") {
            cumulative_weight_prop = suma2 / sum(suma1, na.rm=TRUE)) %>%
     mutate(
       quintile_ci_urban = case_when(
-        cumulative_weight_prop < 0.20 & zona_c==1 ~ "quintile_1_urban",
-        cumulative_weight_prop < 0.40 & zona_c==1 ~ "quintile_2_urban",
-        cumulative_weight_prop < 0.60 & zona_c==1 ~ "quintile_3_urban",
-        cumulative_weight_prop < 0.80 & zona_c==1 ~ "quintile_4_urban",
-        cumulative_weight_prop >= 0.80 & zona_c==1 ~ "quintile_5_urban",
+        cumulative_weight_prop < 0.20 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_1_urban",
+        cumulative_weight_prop < 0.40 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_2_urban",
+        cumulative_weight_prop < 0.60 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_3_urban",
+        cumulative_weight_prop < 0.80 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_4_urban",
+        cumulative_weight_prop >= 0.80 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_5_urban",
         TRUE ~ NA_character_
       )
     )
@@ -236,11 +236,11 @@ if (tipo == "encuestas") {
            cumulative_weight_prop_rural = suma2 / sum(suma1, na.rm=TRUE)) %>%
     mutate(
       quintile_ci_rural = case_when(
-        cumulative_weight_prop_rural < 0.20 & zona_c==0 ~ "quintile_1_rural",
-        cumulative_weight_prop_rural < 0.40 & zona_c==0 ~ "quintile_2_rural",
-        cumulative_weight_prop_rural < 0.60 & zona_c==0 ~ "quintile_3_rural",
-        cumulative_weight_prop_rural < 0.80 & zona_c==0 ~ "quintile_4_rural",
-        cumulative_weight_prop_rural >= 0.80 & zona_c==0  ~ "quintile_5_rural",
+        cumulative_weight_prop_rural < 0.20 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_1_rural",
+        cumulative_weight_prop_rural < 0.40 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_2_rural",
+        cumulative_weight_prop_rural < 0.60 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_3_rural",
+        cumulative_weight_prop_rural < 0.80 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_4_rural",
+        cumulative_weight_prop_rural >= 0.80 & zona_c==0  &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_5_rural",
         TRUE ~ NA_character_
       )
     )
@@ -253,11 +253,11 @@ if (tipo == "encuestas") {
            cumulative_weight_prop2 = (suma2 / sum(suma1, na.rm=TRUE))) %>%
     mutate(
       quintile_ch = case_when(
-        cumulative_weight_prop2 < 0.20 & jefe_ci==1 ~ "quintile_1_ch",
-        cumulative_weight_prop2 < 0.40 & jefe_ci==1 ~ "quintile_2_ch",
-        cumulative_weight_prop2 < 0.60 & jefe_ci==1 ~ "quintile_3_ch",
-        cumulative_weight_prop2 < 0.80 & jefe_ci==1 ~ "quintile_4_ch",
-        cumulative_weight_prop2 >= 0.80 & jefe_ci==1 ~ "quintile_5_ch",
+        cumulative_weight_prop2 < 0.20 & jefe_ci==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_1_ch",
+        cumulative_weight_prop2 < 0.40 & jefe_ci==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_2_ch",
+        cumulative_weight_prop2 < 0.60 & jefe_ci==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_3_ch",
+        cumulative_weight_prop2 < 0.80 & jefe_ci==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_4_ch",
+        cumulative_weight_prop2 >= 0.80 & jefe_ci==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_5_ch",
         TRUE ~ NA_character_
       )
     )
@@ -270,11 +270,11 @@ if (tipo == "encuestas") {
            cumulative_weight_prop2 = (suma2 / sum(suma1, na.rm=TRUE))) %>%
     mutate(
       quintile_ch_urban = case_when(
-        cumulative_weight_prop2 < 0.20 & jefe_ci==1 & zona_c==1 ~ "quintile_1_ch_urban",
-        cumulative_weight_prop2 < 0.40 & jefe_ci==1 & zona_c==1 ~ "quintile_2_ch_urban",
-        cumulative_weight_prop2 < 0.60 & jefe_ci==1 & zona_c==1 ~ "quintile_3_ch_urban",
-        cumulative_weight_prop2 < 0.80 & jefe_ci==1 & zona_c==1 ~ "quintile_4_ch_urban",
-        cumulative_weight_prop2 >= 0.80 & jefe_ci==1  & zona_c==1~ "quintile_5_ch_urban",
+        cumulative_weight_prop2 < 0.20 & jefe_ci==1 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_1_ch_urban",
+        cumulative_weight_prop2 < 0.40 & jefe_ci==1 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_2_ch_urban",
+        cumulative_weight_prop2 < 0.60 & jefe_ci==1 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_3_ch_urban",
+        cumulative_weight_prop2 < 0.80 & jefe_ci==1 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_4_ch_urban",
+        cumulative_weight_prop2 >= 0.80 & jefe_ci==1  & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_5_ch_urban",
         TRUE ~ NA_character_
       )
     )
@@ -287,11 +287,11 @@ if (tipo == "encuestas") {
            cumulative_weight_prop2 = (suma2 / sum(suma1, na.rm=TRUE))) %>%
     mutate(
       quintile_ch_rural = case_when(
-        cumulative_weight_prop2 < 0.20 & jefe_ci==1 & zona_c==0 ~ "quintile_1_ch_rural",
-        cumulative_weight_prop2 < 0.40 & jefe_ci==1 & zona_c==0 ~ "quintile_2_ch_rural",
-        cumulative_weight_prop2 < 0.60 & jefe_ci==1 & zona_c==0 ~ "quintile_3_ch_rural",
-        cumulative_weight_prop2 < 0.80 & jefe_ci==1 & zona_c==0 ~ "quintile_4_ch_rural",
-        cumulative_weight_prop2 >= 0.80 & jefe_ci==1  & zona_c==0~ "quintile_5_ch_rural",
+        cumulative_weight_prop2 < 0.20 & jefe_ci==1 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_1_ch_rural",
+        cumulative_weight_prop2 < 0.40 & jefe_ci==1 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_2_ch_rural",
+        cumulative_weight_prop2 < 0.60 & jefe_ci==1 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_3_ch_rural",
+        cumulative_weight_prop2 < 0.80 & jefe_ci==1 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_4_ch_rural",
+        cumulative_weight_prop2 >= 0.80 & jefe_ci==1  & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_5_ch_rural",
         TRUE ~ NA_character_
       )
     )
@@ -303,18 +303,19 @@ if (tipo == "encuestas") {
     arrange(pc_ytot_ch,idh_ch) %>%
     mutate(suma1 = ifelse(!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci),factor_ci,0),
            suma2 = cumsum(suma1),
-           cumulative_weight_prop = suma2 / sum(factor_ci, na.rm=TRUE)) %>%
+           cumulative_weight_prop = suma2 / sum(suma1, na.rm=TRUE)) %>%
     mutate(
       decile_ci = case_when(
-        cumulative_weight_prop < 0.10 ~ 1,
-        cumulative_weight_prop < 0.20 ~ 2,
-        cumulative_weight_prop < 0.30 ~ 3,
-        cumulative_weight_prop < 0.40 ~ 4,
-        cumulative_weight_prop < 0.50 ~ 5,
-        cumulative_weight_prop < 0.60 ~ 6,
-        cumulative_weight_prop < 0.70 ~ 7,
-        cumulative_weight_prop < 0.80 ~ 8,
-        cumulative_weight_prop >=0.90 ~ 9,
+        cumulative_weight_prop<0.10 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci) ~ 1,
+        cumulative_weight_prop< 0.20 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci) ~ 2,
+        cumulative_weight_prop < 0.30 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 3,
+        cumulative_weight_prop < 0.40 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 4,
+        cumulative_weight_prop < 0.50 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 5,
+        cumulative_weight_prop < 0.60 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 6,
+        cumulative_weight_prop < 0.70 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 7,
+        cumulative_weight_prop < 0.80 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 8,
+        cumulative_weight_prop <0.90 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 9,
+        cumulative_weight_prop >0.90 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 10,
         TRUE ~ NA_real_
       )
     )
@@ -328,7 +329,7 @@ if (tipo == "encuestas") {
     mutate(percentil_points = case_when(
       decile_ci == 2 & (isminv2 == pc_ytot_ch) ~ 10,
       decile_ci == 6 & (isminv2 == pc_ytot_ch) ~ 50,
-      decile_ci == 9 & (isminv2 == pc_ytot_ch) ~ 90,
+      decile_ci == 10 & (isminv2 == pc_ytot_ch) ~ 90,
       TRUE ~ NA_real_
     ))
   
@@ -350,7 +351,7 @@ if (tipo == "encuestas") {
   data_filt <- data_filt %>% rename(isoalpha3 = pais_c,
                                     year = anio_c)
   
-  data_filtv2 <- data_filt %>% select(idh_ch,idp_ci,factor_ci,ytot_ch,pc_ytot_ch,suma1,suma2,cumulative_weight_prop,quintile, internet_ch,quintile_ch)
+  data_filtv2 <- data_filt %>% select(idh_ch,idp_ci,factor_ci,ytot_ch,pc_ytot_ch,suma1,suma2,cumulative_weight_prop,quintile, internet_ch,quintile_ch,decile_ci,percentil_points)
 }
 
 
