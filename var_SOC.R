@@ -315,7 +315,7 @@ if (tipo == "encuestas") {
         cumulative_weight_prop < 0.70 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 7,
         cumulative_weight_prop < 0.80 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 8,
         cumulative_weight_prop <0.90 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 9,
-        cumulative_weight_prop >0.90 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 10,
+        cumulative_weight_prop >=0.90 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 10,
         TRUE ~ NA_real_
       )
     )
@@ -351,7 +351,7 @@ if (tipo == "encuestas") {
   data_filt <- data_filt %>% rename(isoalpha3 = pais_c,
                                     year = anio_c)
   
-  data_filtv2 <- data_filt %>% select(idh_ch,idp_ci,factor_ci,ytot_ch,pc_ytot_ch,suma1,suma2,cumulative_weight_prop,quintile, internet_ch,quintile_ch,decile_ci,percentil_points)
+  
 }
 
 
