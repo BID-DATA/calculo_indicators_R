@@ -10,7 +10,7 @@ library(multidplyr)
 library(reldist)
 options(scipen = 999)
 # select between "censos"/"encuestas"
-tipo <- "encuestas"
+tipo <- "censos"
 # select between country or ine01 for surveys and country or geolev1 for census
 geoLevel <- "geolev1"
 if (tipo=="encuestas"){
@@ -21,7 +21,7 @@ available_years <- read.csv("Inputs/running_survey.csv") %>%
 
 if (tipo=="censos"){
   available_years <- read.csv("Inputs/running_census.csv") %>% 
-    filter(availability==1&person=="David")
+    filter(availability==1&person=="jillie")
 }
 # if needed you can run by chunks of countries here
 #"ARG",   "CHL", "BLZ", "BRA", "COL", "CRI", "ECU", "GUY", "HTI",  "PAN", "PRY", "SUR", "URY"
