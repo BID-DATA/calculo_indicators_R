@@ -181,16 +181,34 @@ data_total <- data_total %>% mutate(
                             TRUE~NA_real_)
 )
 
-# reorder by column name
-data_total <- data_total[, c("iddate", "year", "idgeo","isoalpha3","fuente","indicator","area",
-                             "quintile","sex","education_level","age","ethnicity","disability","migration",
-                             "value","level","se","cv","sample","quality_check")]
 
 # if census then add to the name of the results
 if (tipo=="censos"){
   data_total$indicator <- lapply(data_total$indicator, function(x) paste(x,'_PHC',sep = ""))
   data_total <- as.data.frame(apply(data_total,2,as.character))
 }
+
+# updating automatically MyData
+
+data_total <- data_total %>% mutate_all(~ifelse(is.nan(.), NA, .))
+
+data_total <- data_total%>%mutate_at( 
+  c('level','se','cv','sample','quality_check'), as.character) 
+
+
+# replacing NA with blank spaces
+data_total <- data_total %>%
+  mutate_at(c('level','se','cv','sample','quality_check'), ~replace_na(.,""))
+
+# creating correlative
+# indicator would be a correlative that includes indicator_country_year_#number
+data_total <- data_total %>% group_by(indicator) %>% mutate(id = row_number())
+data_total <- data_total %>% mutate(identifier = paste(isoalpha3,year,indicator,id,sep = "_"))
+
+# reorder by column name
+data_total <- data_total[, c("iddate", "year", "idgeo","isoalpha3","fuente","indicator","area",
+                             "quintile","sex","education_level","age","ethnicity","disability","migration",
+                             "value","level","se","cv","sample","quality_check","identifier")]
 
 end_time <- Sys.time() 
 
