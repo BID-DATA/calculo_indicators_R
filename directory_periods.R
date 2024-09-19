@@ -44,3 +44,13 @@ base <- paste("Z://census//clean//",pais,"//",pais,"_",anio,"_censusBID.dta",sep
 
 }
 }
+# dictionary address
+if (tipo == "encuestas") {
+dictionary <- "C:/Users/DCOR/Inter-American Development Bank Group/Data Governance - SCL - General/W. Other/W.5 - SCLData2.0/2. Página web/bases de datos/dictionariesMyData/D.1.2.1 Diccionario - indicadores encuestas de hogares.csv"
+}
+
+collections_dictionary <- "C:/Users/DCOR/Inter-American Development Bank Group/Data Governance - SCL - General/W. Other/W.5 - SCLData2.0/2. Página web/bases de datos/data projects/M.232 Processed-Semantic - Schema Standard.xlsx"
+
+if (tipo == "censos") {
+  dictionary <- "C:/Users/DCOR/Inter-American Development Bank Group/Data Governance - SCL - General/W. Other/W.5 - SCLData2.0/2. Página web/bases de datos/dictionariesMyData/D.7.2.1 Diccionario - indicadores de censos de población.csv"
+}
