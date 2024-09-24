@@ -581,28 +581,7 @@ if (tipo == "encuestas") {
   }
 
 
-  #9. Edusm
-  if((pais=="BRB"|pais=="COL"|pais=="CRI"|pais=="GTM"|pais=="GUY"|pais=="HND"|pais=="JAM"|pais=="NIC"|pais=="PER"|pais=="SLV"|pais=="VEN")) {
-    data_filt <- data_filt %>% 
-      mutate(eduscm_ci = case_when((aedu_ci>11) ~ 1,
-                                   !(aedu_ci>11) ~ 0,
-                                   TRUE ~ NA_real_)
-      )
-    
-  } else if(pais=="HTI"|pais=="SUR") {
-    data_filt <- data_filt %>% 
-      mutate(eduscm_ci = case_when((aedu_ci>13) ~ 1,
-                                   !(aedu_ci>13) ~ 0,
-                                   TRUE ~ NA_real_)
-      )
-    
-  }else {
-    data_filt <- data_filt %>% 
-      mutate(eduscm_ci = case_when((aedu_ci>12) ~ 1,
-                                   !(aedu_ci>12) ~ 0,
-                                   TRUE ~ NA_real_)
-      )
-  }
+ 
   # 10 leavers
   if(pais=="SUR"|pais=="HTI") {
     data_filt <- data_filt %>% 
