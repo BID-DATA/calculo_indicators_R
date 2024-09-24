@@ -9,6 +9,8 @@ library(readxl)
 library(parallel)
 library(multidplyr)
 library(reldist)
+library(RSocrata)
+library(jsonlite)
 
 pais<-"SLV"
 anio<-"2022"
@@ -18,6 +20,8 @@ tipo<-"encuestas"
 
 # select between country or ine01 for surveys and country or geolevel1 for census
 geoLevel <- "country"
+
+
 #deleting dataset
 rm("data_scl","data_total","data_aux")
 gc()
