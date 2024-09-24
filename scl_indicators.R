@@ -210,6 +210,10 @@ data_total <- data_total[, c("iddate", "year", "idgeo","isoalpha3","fuente","ind
                              "quintile","sex","education_level","age","ethnicity","disability","migration",
                              "value","level","se","cv","sample","quality_check","identifier")]
 
+source("AddinExtraVariables.R")
+
+source("ObtainingIDs.R")
+
 end_time <- Sys.time() 
 
 # Now calculate the difference
