@@ -34,7 +34,7 @@ if (tipo == "censos") {
              pais_c=="BHS"~ 1.150889,
              pais_c=="BLZ"~ 1.182611,
              pais_c=="BOL"~ 2.906106,
-             pais_c=="BRA"~ 2.906106,
+             pais_c=="BRA"~ 1.658783,
              pais_c=="BRB"~ 2.412881,
              pais_c=="CHL"~ 370.1987,
              pais_c=="COL"~ 1196.955,
