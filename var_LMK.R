@@ -155,49 +155,31 @@ if (tipo == "encuestas") {
         (is.na(salmm_ci)& condocup_ci==1)~NA_real_
       ),
       #1.5 PPP
-      ppp = case_when(
-        pais_c=="ARG"~ 2.768382,
-        pais_c=="BHS"~ 1.150889,
-        pais_c=="BLZ"~ 1.182611,
-        pais_c=="BOL"~ 2.906106,
-        pais_c=="BRA"~ 2.906106,
-        pais_c=="BRB"~ 2.412881,
-        pais_c=="CHL"~ 370.1987,
-        pais_c=="COL"~ 1196.955,
-        pais_c=="CRI"~ 343.7857,
-        pais_c=="DOM"~ 20.74103,
-        pais_c=="ECU"~ 0.5472345,
-        pais_c=="GTM"~ 3.873239,
-        pais_c=="HND"~ 10.08031,
-        pais_c=="MEX"~ 8.940212,
-        pais_c=="NIC"~ 9.160075,
-        pais_c=="PAN"~ 0.553408,
-        pais_c=="PER"~ 1.568639,
-        pais_c=="PRY"~ 2309.43,
-        pais_c=="SLV"~ 0.5307735,
-        pais_c=="URY"~ 16.42385,
-        pais_c=="VEN"~ 2.915005,
-        pais_c=="JAM"~ 63.35445,
-        pais_c=="TTO"~ 4.619226
-      ),
       #1.6 Ingresos
       #1.6.1 Población ocupada por encima del umbral del salario horario suficiente (1.95 US ppp) 
-      ylmpri_ppp = ylmpri_ci/ppp/ipc_c,
+      ylmpri_ppp = ylmpri_ci/ppp_2011/ratio_cpi2011,
+      ylmpri_ppp_2017 = ylmpri_ci/ppp_2017/ratio_cpi2017,
       hsal_ci= ifelse(condocup_ci==1, ylmpri_ppp/(horaspri_ci*4.3), NA_real_), 
+      hsal_ci_2017= ifelse(condocup_ci==1, ylmpri_ppp_2017/(horaspri_ci*4.3), NA_real_), 
       liv_wage   = ifelse(is.na(hsal_ci),NA_real_,hsal_ci>1.95),
       #1.6.2 Ingreso laboral monetario
       ylm_ci = ifelse(is.na(ylmpri_ci),NA_real_,ylm_ci),
       ylab_ci = ifelse(pea==1 & emp_ci==1,ylm_ci,NA_real_),
-      ylab_ppp=ylab_ci/ppp/ipc_c,
+      ylab_ppp=ylab_ci/ppp_2011/ratio_cpi2011,
+      ylab_ppp_2017=ylab_ci/ppp_2017/ratio_cpi2017,
       #1.6.3 Ingreso horario en la actividad principal USD
       hwage_ci = ifelse(condocup_ci==1,ylmpri_ci/(horaspri_ci*4.3),NA_real_),
-      hwage_ppp=hwage_ci/ppp/ipc_c,
+      hwage_ppp=hwage_ci/ppp_2011/ratio_cpi2011,
+      hwage_ppp_2017=hwage_ci/ppp_2017/ratio_cpi2017,
       #1.6.4 Ingreso por pensión contributiva USD
-      ypen_ppp=ypen_ci/ppp/ipc_c,
+      ypen_ppp=ypen_ci/ppp_2011/ratio_cpi2011,
+      ypen_ppp_2017=ypen_ci/ppp_2017/ratio_cpi2017,
       #1.6.5 Salario mínimo mensual y horario - USD PPP
-      salmm_ppp=salmm_ci/ppp/ipc_c,
+      salmm_ppp=salmm_ci/ppp_2011/ratio_cpi2011,
+      salmm_ppp_2017=salmm_ci/ppp_2017/ratio_cpi2017,
       hsmin_ci=salmm_ci/(5*8*4.3),
       hsmin_ppp=salmm_ppp/(5*8*4.3),
+      hsmin_ppp_2017=salmm_ppp_2017/(5*8*4.3),
       #1.6.6 Salario por actividad principal y total menor al mínimo legal (por mes)
       yltotal_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci), na.rm = TRUE)),
       menorwmin = ifelse((condocup_ci==1 & !is.na(salmm_ci) & !is.na(ylmpri_ci)),(ylmpri_ci<=salmm_ci),NA_real_),
