@@ -157,11 +157,18 @@ if (tipo == "encuestas") {
       pc_ytot_ch = ifelse(pc_ytot_ch <= 0, NA, pc_ytot_ch),
       # Define area and sex based on zona_c and sexo_ci respectively, 
       income_category = case_when(
-        (pc_ytot_ch < lp31_ci ~ "extreme"),  # extreme poverty
-        (pc_ytot_ch >= lp31_ci) & (pc_ytot_ch < lp5_ci) ~ "poverty",  # poverty
-        (pc_ytot_ch >= lp5_ci) & (pc_ytot_ch < lp31_ci*4) ~ "vulnerable",  # vulnerable
-        (pc_ytot_ch >= lp31_ci*4) & (pc_ytot_ch < lp31_ci*20) ~ "middle",  # middle class
-        (pc_ytot_ch >= lp31_ci*20) ~ "rich", 
+        (pc_ytot_ch < lp31_2011 ~ "extreme"),  # extreme poverty
+        (pc_ytot_ch >= lp31_2011) & (pc_ytot_ch < lp5_2011) ~ "poverty",  # poverty
+        (pc_ytot_ch >= lp5_2011) & (pc_ytot_ch < lp31_2011*4) ~ "vulnerable",  # vulnerable
+        (pc_ytot_ch >= lp31_2011*4) & (pc_ytot_ch < lp31_2011*20) ~ "middle",  # middle class
+        (pc_ytot_ch >= lp31_2011*20) ~ "rich", 
+        TRUE ~ NA_character_),  # rich,
+      income_category_lp2017 = case_when(
+        (pc_ytot_ch < lp365_2017 ~ "extreme"),  # extreme poverty
+        (pc_ytot_ch >= lp365_2017) & (pc_ytot_ch < lp685_2017) ~ "poverty",  # poverty
+        (pc_ytot_ch >= lp685_2017) & (pc_ytot_ch < lp14_2017) ~ "vulnerable",  # vulnerable
+        (pc_ytot_ch >= lp14_2017) & (pc_ytot_ch < lp81_2017) ~ "middle",  # middle class
+        (pc_ytot_ch >= lp81_2017) ~ "rich", 
         TRUE ~ NA_character_),  # rich,
       area = case_when(
         zona_c == 1 ~ "urban", 
