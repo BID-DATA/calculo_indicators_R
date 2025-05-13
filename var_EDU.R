@@ -696,8 +696,51 @@ if (tipo == "encuestas") {
     mutate( age_tert_fin = case_when((edad_ci > 24) & (edad_ci <36) ~ 1,
                                         TRUE ~ NA_real_)
     )
+  
+  # Creando las variables de secundaria baja y alta
+  data_filt <- data_filt %>% 
+    mutate(seco_low = case_when(
+      pais_c %in% c("COL", "BRA") & aedu_ci %in% 6:9 ~ 1,
+      pais_c %in% c("BRB","CRI","GTM","GUY","JAM","NIC","PER","VEN","SLV","HND", 
+                    "BHS","ARG","ECU","MEX","URY","PAN","PRY", "HTI") & aedu_ci %in% 7:9 ~ 1,
+      pais_c %in% c("BOL","CHL","DOM") & aedu_ci %in% 7:8 ~ 1,
+      pais_c %in% c("BHS","ARG","ECU","MEX","URY","PAN","PRY") & aedu_ci %in% 7:9 ~ 1,
+      pais_c %in% c("BLZ", "SUR") & aedu_ci %in% 7:10 ~ 1,
+      pais_c == "TTO" & aedu_ci %in% 8:10 ~ 1,
+      TRUE ~ 0
+    ),
+  # Define secondary high
+  seco_high = case_when(
+    pais_c %in% c("COL", "BRB","CRI","GTM","GUY","JAM","NIC","PER","VEN","SLV","HND") & aedu_ci %in% 10:11 ~ 1,
+    pais_c %in% c("BOL","CHL","DOM") & aedu_ci %in% 9:12 ~ 1,
+    pais_c %in% c("BRA", "BHS","ARG","ECU","MEX","URY","PAN","PRY") & aedu_ci %in% 10:12 ~ 1,
+    pais_c == "HTI" & aedu_ci %in% 10:13 ~ 1,
+    pais_c == "BLZ" & aedu_ci %in% 11:12 ~ 1,
+    pais_c == "SUR" & aedu_ci %in% 11:13 ~ 1,
+    pais_c == "TTO" & aedu_ci %in% 11:12 ~ 1,
+    TRUE ~ 0
+  ),
+  asis_net_secbaja_c = if_else(seco_low == 1 & asis_net_seco_c == 1, 1, 0),
+  asis_net_secalta_c = if_else(seco_high == 1 & asis_net_seco_c == 1, 1, 0),
+  
+  asis_secbaja_c = if_else(seco_low == 1 & asis_seco_c == 1, 1, 0),
+  asis_secalta_c  = if_else(seco_high == 1 & asis_seco_c == 1, 1, 0),
+  
+  age_seco_low = if_else(seco_low == 1 & age_seco_c == 1, 1, 0),
+  age_seco_high = if_else(seco_high == 1 & age_seco_c == 1, 1, 0),
+  
+  age_term_sb_c = case_when(
+    pais_c %in% c("COL", "BRA", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
+                  "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & edad_ci %in% 15:16 ~ 1,
+    pais_c %in% c("BOL", "CHL", "DOM") & edad_ci %in% 14:15 ~ 1,
+    pais_c %in% c("BLZ", "SUR", "TTO") & edad_ci %in% 16:17 ~ 1,
+    TRUE ~ 0
+  ),
+  
+  age_term_sa_c_ =age_term_s_c, # same as full secondary
+    )
   #
-
+  
   data_filt <- data_filt %>% 
     mutate(
     grupo_etario = case_when(edad_ci >= 4 & edad_ci <= 5 ~ "age_4_5",
@@ -719,5 +762,145 @@ if (tipo == "encuestas") {
     age_18_24_edu = ifelse(edad_ci >= 18 & edad_ci <= 24, 1, 0),
     
     )
+  # Nivel Edu ----
+  # Create `nivel_edu` variable
+  data_filt <- data_filt %>%
+    mutate(
+      # Initialize `nivel_edu` as NA
+      nivel_edu = NA_real_,
+      
+      # Apply conditions for each country based on the values of `pais_c` and `aedu_ci`
+      
+      # Colombia (COL)
+      nivel_edu = case_when(
+        pais_c == "COL" & aedu_ci <= 4 ~ 1,   # Primaria incompleta
+        pais_c == "COL" & aedu_ci == 5 ~ 2,   # Primaria completa
+        pais_c == "COL" & aedu_ci %in% 6:8 ~ 3, # Secundaria ciclo 1 incompleta
+        pais_c == "COL" & aedu_ci == 9 ~ 4,   # Secundaria ciclo 1 completa
+        pais_c == "COL" & aedu_ci == 10 ~ 5,  # Secundaria incompleta
+        pais_c == "COL" & aedu_ci >= 11 ~ 6,  # Secundaria completa
+        TRUE ~ nivel_edu
+      ),
+      
+      # Brazil (BRA)
+      nivel_edu = case_when(
+        pais_c == "BRA" & aedu_ci <= 4 ~ 1,
+        pais_c == "BRA" & aedu_ci == 5 ~ 2,
+        pais_c == "BRA" & aedu_ci %in% 6:8 ~ 3,
+        pais_c == "BRA" & aedu_ci == 9 ~ 4,
+        pais_c == "BRA" & aedu_ci %in% 10:11 ~ 5,
+        pais_c == "BRA" & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Bolivia (BOL), Chile (CHL), Dominican Republic (DOM)
+      nivel_edu = case_when(
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci <= 5 ~ 1,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci == 6 ~ 2,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci == 7 ~ 3,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci == 8 ~ 4,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci %in% 9:11 ~ 5,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Other countries like BHS, ARG, ECU, MEX, URY, PAN, PRY
+      nivel_edu = case_when(
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci <= 5 ~ 1,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci == 6 ~ 2,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci %in% 7:8 ~ 3,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci == 9 ~ 4,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci %in% 10:11 ~ 5,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Other countries: CRI, BRB, GTM, GUY, JAM, NIC, PER, VEN, SLV, HND
+      nivel_edu = case_when(
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci <= 5 ~ 1,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci == 6 ~ 2,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci %in% 7:8 ~ 3,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci == 9 ~ 4,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci %in% 10:11 ~ 5,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Suriname (SUR)
+      nivel_edu = case_when(
+        pais_c == "SUR" & aedu_ci <= 5 ~ 1,
+        pais_c == "SUR" & aedu_ci == 6 ~ 2,
+        pais_c == "SUR" & aedu_ci %in% 7:9 ~ 3,
+        pais_c == "SUR" & aedu_ci == 10 ~ 4,
+        pais_c == "SUR" & aedu_ci %in% 11:12 ~ 5,
+        pais_c == "SUR" & aedu_ci >= 13 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Trinidad and Tobago (TTO)
+      nivel_edu = case_when(
+        pais_c == "TTO" & aedu_ci <= 6 ~ 1,
+        pais_c == "TTO" & aedu_ci == 7 ~ 2,
+        pais_c == "TTO" & aedu_ci %in% 8:9 ~ 3,
+        pais_c == "TTO" & aedu_ci == 10 ~ 4,
+        pais_c == "TTO" & aedu_ci == 11 ~ 5,
+        pais_c == "TTO" & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Barbados (BRB)
+      nivel_edu = case_when(
+        pais_c == "BRB" & aedu_ci <= 5 ~ 1,
+        pais_c == "BRB" & aedu_ci == 6 ~ 2,
+        pais_c == "BRB" & aedu_ci %in% 7:8 ~ 3,
+        pais_c == "BRB" & aedu_ci == 9 ~ 4,
+        pais_c == "BRB" & aedu_ci %in% 10:11 ~ 5,
+        pais_c == "BRB" & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Haiti (HTI)
+      nivel_edu = case_when(
+        pais_c == "HTI" & aedu_ci <= 5 ~ 1,
+        pais_c == "HTI" & aedu_ci == 6 ~ 2,
+        pais_c == "HTI" & aedu_ci %in% 7:8 ~ 3,
+        pais_c == "HTI" & aedu_ci == 9 ~ 4,
+        pais_c == "HTI" & aedu_ci %in% 10:12 ~ 5,
+        pais_c == "HTI" & aedu_ci >= 13 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Belize (BLZ)
+      nivel_edu = case_when(
+        pais_c == "BLZ" & aedu_ci <= 5 ~ 1,
+        pais_c == "BLZ" & aedu_ci == 6 ~ 2,
+        pais_c == "BLZ" & aedu_ci %in% 7:9 ~ 3,
+        pais_c == "BLZ" & aedu_ci == 10 ~ 4,
+        pais_c == "BLZ" & aedu_ci == 11 ~ 5,
+        pais_c == "BLZ" & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Adding superior education (eduui_ci and eduuc_ci)
+      nivel_edu = case_when(
+        eduui_ci == 1 ~ 7,  # Superior incomplete
+        eduuc_ci == 1 ~ 8,  # Superior complete
+        TRUE ~ nivel_edu
+      )
+    )
+  
+  # Create `highest_degree` variable
+  data_filt <- data_filt %>%
+    mutate(
+      highest_degree = case_when(
+        nivel_edu == 1 ~ 0,  # Ninguno
+        nivel_edu == 2 | nivel_edu == 3 ~ 1,  # Primaria
+        nivel_edu %in% 4:5 ~ 2,  # Secundaria baja
+        nivel_edu %in% 6:7 ~ 3,  # Secundaria alta
+        nivel_edu == 8 ~ 4,  # Universitaria
+        TRUE ~ NA_real_
+      )
+    )
+  
   
 }
