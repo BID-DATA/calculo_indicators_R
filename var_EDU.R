@@ -825,7 +825,7 @@ if (tipo == "encuestas") {
       
      
       
-      # edad oportuna +3-5 años
+      # edad term + 3-5 años
       age_term_sb_c = case_when(
         pais_c %in% c("COL", "BRA", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
                       "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & edad_ci %in% 17:19 ~ 1,
@@ -1008,27 +1008,27 @@ if (tipo == "encuestas") {
   data_filt <- data_filt %>%
     mutate(
     age_term_p_eo= case_when(
-      pais_c %in% c("COL", "BRA") & edad_ci %in% 10:11 ~ 1,
+      pais_c %in% c("COL", "BRA") & edad_ci %in% 11 ~ 1,
       pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
                     "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI", "BOL", "CHL", "DOM",
-                    "BLZ", "SUR") & edad_ci %in% 11:12 ~ 1,
-      pais == "TTO" & edad_ci %in% 12:13 ~ 1,
+                    "BLZ", "SUR") & edad_ci %in% 12 ~ 1,
+      pais == "TTO" & edad_ci %in% 13 ~ 1,
       TRUE ~ 0
     ),
       
     age_term_sb_eo = case_when(
       pais_c %in% c("COL", "BRA", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
-                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & edad_ci %in% 14:15 ~ 1,
-      pais_c %in% c("BOL", "CHL", "DOM") & edad_ci %in% 13:14 ~ 1,
-      pais_c %in% c("BLZ", "SUR", "TTO") & edad_ci %in% 15:16 ~ 1,
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & edad_ci %in% 15 ~ 1,
+      pais_c %in% c("BOL", "CHL", "DOM") & edad_ci %in% 14 ~ 1,
+      pais_c %in% c("BLZ", "SUR", "TTO") & edad_ci %in% 16 ~ 1,
       TRUE ~ 0
     ),
     
     age_term_sa_eo_ = case_when(
-      pais_c %in% c("COL", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & edad_ci %in% 16:17 ~ 1,
+      pais_c %in% c("COL", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & edad_ci %in% 17 ~ 1,
       pais_c %in% c("BRA", "BOL", "CHL", "DOM", "BHS", "TTO", "BLZ",
-                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & edad_ci %in% 17:18 ~ 1,
-      pais_c %in% c("HTI", "SUR") & edad_ci %in% 18:19 ~ 1,
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & edad_ci %in% 18 ~ 1,
+      pais_c %in% c("HTI", "SUR") & edad_ci %in% 19 ~ 1,
       TRUE ~ 0
     ))
       
