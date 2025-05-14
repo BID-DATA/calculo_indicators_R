@@ -1,6 +1,6 @@
 # Script para generar variables intermedias - EDU
 
-# 1. Censos 
+# Censos ----
 
 if (tipo == "censos") {
   
@@ -349,6 +349,7 @@ if (tipo == "censos") {
   
 }
 
+# Encuestas ----
 if (tipo == "encuestas") {
   
   data_filt <- data_filt %>% 
@@ -720,4 +721,315 @@ if (tipo == "encuestas") {
     
     )
   
+  ## Nuevas variables secundaria baja y alta ----
+  data_filt <- data_filt %>% 
+    mutate(
+      
+      # Define secondary low
+      seco_baja = case_when(
+        pais_c %in% c("COL", "BRA") & aedu_ci %in% 6:9 ~ 1,
+        pais_c %in% c("BRB","CRI","GTM","GUY","JAM","NIC","PER","VEN","SLV","HND", 
+                      "BHS","ARG","ECU","MEX","URY","PAN","PRY", "HTI") & aedu_ci %in% 7:9 ~ 1,
+        pais_c %in% c("BOL","CHL","DOM") & aedu_ci %in% 7:8 ~ 1,
+        pais_c %in% c("BHS","ARG","ECU","MEX","URY","PAN","PRY") & aedu_ci %in% 7:9 ~ 1,
+        pais_c %in% c("BLZ", "SUR") & aedu_ci %in% 7:10 ~ 1,
+        pais_c == "TTO" & aedu_ci %in% 8:10 ~ 1,
+        TRUE ~ 0
+      ),
+      
+      # Define secondary high
+      seco_alta = case_when(
+        pais_c %in% c("COL", "BRB","CRI","GTM","GUY","JAM","NIC","PER","VEN","SLV","HND") & aedu_ci %in% 10:11 ~ 1,
+        pais_c %in% c("BOL","CHL","DOM") & aedu_ci %in% 9:12 ~ 1,
+        pais_c %in% c("BRA", "BHS","ARG","ECU","MEX","URY","PAN","PRY") & aedu_ci %in% 10:12 ~ 1,
+        pais_c == "HTI" & aedu_ci %in% 10:13 ~ 1,
+        pais_c == "BLZ" & aedu_ci %in% 11:12 ~ 1,
+        pais_c == "SUR" & aedu_ci %in% 11:13 ~ 1,
+        pais_c == "TTO" & aedu_ci %in% 11:12 ~ 1,
+        TRUE ~ 0
+      ),
+      
+      ### age secbaja & secalta ----
+      age_secbaja_c = case_when(
+        # 7° a 9°
+        pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", 
+                      "VEN", "SLV", "HND", "BHS", "ARG", "ECU", "MEX", 
+                      "URY", "PAN", "PRY", "HTI") & edad_ci >= 12 & edad_ci <= 14 ~ 1, 
+        
+        pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", 
+                      "VEN", "SLV", "HND", "BHS", "ARG", "ECU", "MEX", 
+                      "URY", "PAN", "PRY", "HTI") & !(edad_ci >= 12 & edad_ci <= 14) ~ 0, 
+        
+        # 6° a 9°
+        pais_c %in% c("COL", "BRA") & edad_ci >= 11 & edad_ci <= 14 ~ 1,
+        pais_c %in% c("COL", "BRA") & !(edad_ci >= 11 & edad_ci <= 14) ~ 0, 
+        
+        # 7° a 8°
+        pais_c %in% c("BOL", "CHL", "DOM") & edad_ci >= 12 & edad_ci <= 13 ~ 1,
+        pais_c %in% c("BOL", "CHL", "DOM") & !(edad_ci >= 12 & edad_ci <= 13) ~ 1, 
+        
+        # 7° a 10°
+        pais_c %in% c("SUR", "BLZ") & edad_ci >= 12 & edad_ci <= 15 ~ 1,
+        pais_c %in% c("SUR", "BLZ") & !(edad_ci >= 12 & edad_ci <= 15) ~ 0, 
+        
+        # 8° a 10°
+        pais_c == "TTO" & edad_ci >= 13 & edad_ci <= 15 ~ 1,
+        pais_c == "TTO" & !(edad_ci >= 13 & edad_ci <= 15) ~ 0, 
+        
+        # default
+        TRUE ~ NA_real_
+      ),
+      
+      age_secalta_c = case_when(
+        # 10° a 11°
+        pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", 
+                      "VEN", "SLV", "HND", "COL") & edad_ci >= 15 & edad_ci <= 16 ~ 1, 
+        
+        pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", 
+                      "VEN", "SLV", "HND", "COL") & !(edad_ci >= 15 & edad_ci <= 16) ~ 0, 
+        
+        # 10° a 12°
+        pais_c %in% c("BRA", "BHS", "ARG", "ECU", "MEX", 
+                      "URY", "PAN", "PRY") & (edad_ci >= 15 & edad_ci <= 17) ~ 1, 
+        pais_c %in% c("BRA", "BHS", "ARG", "ECU", "MEX", 
+                      "URY", "PAN", "PRY") & !(edad_ci >= 15 & edad_ci <= 17) ~ 0,
+        
+        
+        # 9° a 12°
+        pais_c %in% c("BOL", "CHL", "DOM") & edad_ci >= 14 & edad_ci <= 17 ~ 1,
+        pais_c %in% c("BOL", "CHL", "DOM") & !(edad_ci >= 14 & edad_ci <= 17) ~ 0, 
+        
+        # 10° a 13°
+        pais_c == "HTI" & edad_ci >= 15 & edad_ci <= 18 ~ 1,
+        pais_c == "HTI" & !(edad_ci >= 15 & edad_ci <= 18) ~ 0, 
+        
+        # 11° a 13°
+        pais_c == "SUR" & edad_ci >= 16 & edad_ci <= 18 ~ 1,
+        pais_c == "SUR" & !(edad_ci >= 16 & edad_ci <= 18) ~ 0, 
+        
+        # 11° a 12°
+        pais_c %in% c("TTO", "BLZ") & edad_ci >= 16 & edad_ci <= 17 ~ 1,
+        pais_c%in% c("TTO", "BLZ") & !(edad_ci >= 16 & edad_ci <= 17) ~ 0, 
+        
+        # default
+        TRUE ~ NA_real_
+      ),
+      
+  
+        
+      asis_net_secbaja_c = if_else(seco_baja == 1 & asiste_ci == 1 & age_secbaja_c ==1, 1, 0),
+      asis_net_secalta_c = if_else(seco_alta == 1 & asiste_ci == 1 & age_secalta_c ==1, 1, 0),
+      
+      asis_secbaja_c = if_else(seco_baja == 1 & asiste_ci == 1, 1, 0),
+      asis_secalta_c  = if_else(seco_alta == 1 & asiste_ci == 1, 1, 0),
+      
+     
+      
+      # edad oportuna +3-5 años
+      age_term_sb_c = case_when(
+        pais_c %in% c("COL", "BRA", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
+                      "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & edad_ci %in% 17:19 ~ 1,
+        pais_c %in% c("BOL", "CHL", "DOM") & edad_ci %in% 16:18 ~ 1,
+        pais_c %in% c("BLZ", "SUR", "TTO") & edad_ci %in% 18:20 ~ 1,
+        TRUE ~ 0
+      ),
+      
+      age_term_sa_c_ = age_term_s_c, # same as full secondary
+      
+      ### Terminación secundaria baja ----
+      t_cond_secbaja = case_when( 
+        
+        # 9°
+        pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", 
+                      "VEN", "SLV", "HND", "BHS", "ARG", "ECU", "MEX", 
+                      "URY", "PAN", "PRY", "HTI", "COL", "BRA") & (aedu_ci>=9 & age_term_sb_c == 1) ~ 1, 
+        
+        pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", 
+                      "VEN", "SLV", "HND", "BHS", "ARG", "ECU", "MEX", 
+                      "URY", "PAN", "PRY", "HTI", "COL", "BRA") & !(aedu_ci>=9 & age_term_sb_c == 1) ~ 0, 
+        
+        # 8°
+        pais_c %in% c("BOL", "CHL", "DOM") & (aedu_ci>=8 & age_term_sb_c == 1) ~ 1,
+        pais_c %in% c("BOL", "CHL", "DOM") & !(aedu_ci>=8 & age_term_sb_c == 1) ~ 1, 
+        
+        # 10°
+        pais_c %in% c("SUR", "BLZ", "TTO") & (aedu_ci>=10 & age_term_sb_c == 1) ~ 1,
+        pais_c %in% c("SUR", "BLZ", "TTO") & !(aedu_ci>=10 & age_term_sb_c == 1) ~ 0, 
+        
+        # default
+        TRUE ~ NA_real_
+      ),
+      
+      # tcond_sec alta es tcond secundaria (ya creada)
+      
+  )
+  
+  ## Nivel Edu ----
+  # Create `nivel_edu` variable
+  data_filt <- data_filt %>%
+    mutate(
+      # Initialize `nivel_edu` as NA
+      nivel_edu = NA_real_,
+      
+      # Apply conditions for each country based on the values of `pais_c` and `aedu_ci`
+      
+      # Colombia (COL)
+      nivel_edu = case_when(
+        pais_c == "COL" & aedu_ci <= 4 ~ 1,   # Primaria incompleta
+        pais_c == "COL" & aedu_ci == 5 ~ 2,   # Primaria completa
+        pais_c == "COL" & aedu_ci %in% 6:8 ~ 3, # Secundaria ciclo 1 incompleta
+        pais_c == "COL" & aedu_ci == 9 ~ 4,   # Secundaria ciclo 1 completa
+        pais_c == "COL" & aedu_ci == 10 ~ 5,  # Secundaria incompleta
+        pais_c == "COL" & aedu_ci >= 11 ~ 6,  # Secundaria completa
+        TRUE ~ nivel_edu
+      ),
+      
+      # Brazil (BRA)
+      nivel_edu = case_when(
+        pais_c == "BRA" & aedu_ci <= 4 ~ 1,
+        pais_c == "BRA" & aedu_ci == 5 ~ 2,
+        pais_c == "BRA" & aedu_ci %in% 6:8 ~ 3,
+        pais_c == "BRA" & aedu_ci == 9 ~ 4,
+        pais_c == "BRA" & aedu_ci %in% 10:11 ~ 5,
+        pais_c == "BRA" & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Bolivia (BOL), Chile (CHL), Dominican Republic (DOM)
+      nivel_edu = case_when(
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci <= 5 ~ 1,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci == 6 ~ 2,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci == 7 ~ 3,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci == 8 ~ 4,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci %in% 9:11 ~ 5,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Other countries like BHS, ARG, ECU, MEX, URY, PAN, PRY
+      nivel_edu = case_when(
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci <= 5 ~ 1,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci == 6 ~ 2,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci %in% 7:8 ~ 3,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci == 9 ~ 4,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci %in% 10:11 ~ 5,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Other countries: CRI, BRB, GTM, GUY, JAM, NIC, PER, VEN, SLV, HND
+      nivel_edu = case_when(
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci <= 5 ~ 1,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci == 6 ~ 2,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci %in% 7:8 ~ 3,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci == 9 ~ 4,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci %in% 10:11 ~ 5,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Suriname (SUR)
+      nivel_edu = case_when(
+        pais_c == "SUR" & aedu_ci <= 5 ~ 1,
+        pais_c == "SUR" & aedu_ci == 6 ~ 2,
+        pais_c == "SUR" & aedu_ci %in% 7:9 ~ 3,
+        pais_c == "SUR" & aedu_ci == 10 ~ 4,
+        pais_c == "SUR" & aedu_ci %in% 11:12 ~ 5,
+        pais_c == "SUR" & aedu_ci >= 13 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Trinidad and Tobago (TTO)
+      nivel_edu = case_when(
+        pais_c == "TTO" & aedu_ci <= 6 ~ 1,
+        pais_c == "TTO" & aedu_ci == 7 ~ 2,
+        pais_c == "TTO" & aedu_ci %in% 8:9 ~ 3,
+        pais_c == "TTO" & aedu_ci == 10 ~ 4,
+        pais_c == "TTO" & aedu_ci == 11 ~ 5,
+        pais_c == "TTO" & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Barbados (BRB)
+      nivel_edu = case_when(
+        pais_c == "BRB" & aedu_ci <= 5 ~ 1,
+        pais_c == "BRB" & aedu_ci == 6 ~ 2,
+        pais_c == "BRB" & aedu_ci %in% 7:8 ~ 3,
+        pais_c == "BRB" & aedu_ci == 9 ~ 4,
+        pais_c == "BRB" & aedu_ci %in% 10:11 ~ 5,
+        pais_c == "BRB" & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Haiti (HTI)
+      nivel_edu = case_when(
+        pais_c == "HTI" & aedu_ci <= 5 ~ 1,
+        pais_c == "HTI" & aedu_ci == 6 ~ 2,
+        pais_c == "HTI" & aedu_ci %in% 7:8 ~ 3,
+        pais_c == "HTI" & aedu_ci == 9 ~ 4,
+        pais_c == "HTI" & aedu_ci %in% 10:12 ~ 5,
+        pais_c == "HTI" & aedu_ci >= 13 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Belize (BLZ)
+      nivel_edu = case_when(
+        pais_c == "BLZ" & aedu_ci <= 5 ~ 1,
+        pais_c == "BLZ" & aedu_ci == 6 ~ 2,
+        pais_c == "BLZ" & aedu_ci %in% 7:9 ~ 3,
+        pais_c == "BLZ" & aedu_ci == 10 ~ 4,
+        pais_c == "BLZ" & aedu_ci == 11 ~ 5,
+        pais_c == "BLZ" & aedu_ci >= 12 ~ 6,
+        TRUE ~ nivel_edu
+      ),
+      
+      # Adding superior education (eduui_ci and eduuc_ci)
+      nivel_edu = case_when(
+        eduui_ci == 1 ~ 7,  # Superior incomplete
+        eduuc_ci == 1 ~ 8,  # Superior complete
+        TRUE ~ nivel_edu
+      )
+    )
+  
+  # Create `highest_degree` variable
+  data_filt <- data_filt %>%
+    mutate(
+      highest_degree = case_when(
+        nivel_edu == 1 ~ 0,  # Ninguno
+        nivel_edu == 2 | nivel_edu == 3 ~ 1,  # Primaria
+        nivel_edu %in% 4:5 ~ 2,  # Secundaria baja
+        nivel_edu %in% 6:7 ~ 3,  # Secundaria alta
+        nivel_edu == 8 ~ 4,  # Universitaria
+        TRUE ~ NA_real_
+      )
+    )  
+  
+  ## Terminación en edad oportuna ----
+  data_filt <- data_filt %>%
+    mutate(
+    age_term_p_eo= case_when(
+      pais_c %in% c("COL", "BRA") & edad_ci %in% 10:11 ~ 1,
+      pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI", "BOL", "CHL", "DOM",
+                    "BLZ", "SUR") & edad_ci %in% 11:12 ~ 1,
+      pais == "TTO" & edad_ci %in% 12:13 ~ 1,
+      TRUE ~ 0
+    ),
+      
+    age_term_sb_eo = case_when(
+      pais_c %in% c("COL", "BRA", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & edad_ci %in% 14:15 ~ 1,
+      pais_c %in% c("BOL", "CHL", "DOM") & edad_ci %in% 13:14 ~ 1,
+      pais_c %in% c("BLZ", "SUR", "TTO") & edad_ci %in% 15:16 ~ 1,
+      TRUE ~ 0
+    ),
+    
+    age_term_sa_eo_ = case_when(
+      pais_c %in% c("COL", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & edad_ci %in% 16:17 ~ 1,
+      pais_c %in% c("BRA", "BOL", "CHL", "DOM", "BHS", "TTO", "BLZ",
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & edad_ci %in% 17:18 ~ 1,
+      pais_c %in% c("HTI", "SUR") & edad_ci %in% 18:19 ~ 1,
+      TRUE ~ 0
+    ))
+      
 }
