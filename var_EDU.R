@@ -727,25 +727,25 @@ if (tipo == "encuestas") {
       
       # Define secondary low
       seco_baja = case_when(
-        pais_c %in% c("COL", "BRA") & aedu_ci %in% 6:9 ~ 1,
+        pais_c %in% c("COL", "BRA") & aedu_ci %in% 5:9 ~ 1,
         pais_c %in% c("BRB","CRI","GTM","GUY","JAM","NIC","PER","VEN","SLV","HND", 
-                      "BHS","ARG","ECU","MEX","URY","PAN","PRY", "HTI") & aedu_ci %in% 7:9 ~ 1,
-        pais_c %in% c("BOL","CHL","DOM") & aedu_ci %in% 7:8 ~ 1,
-        pais_c %in% c("BHS","ARG","ECU","MEX","URY","PAN","PRY") & aedu_ci %in% 7:9 ~ 1,
-        pais_c %in% c("BLZ", "SUR") & aedu_ci %in% 7:10 ~ 1,
-        pais_c == "TTO" & aedu_ci %in% 8:10 ~ 1,
+                      "BHS","ARG","ECU","MEX","URY","PAN","PRY", "HTI") & aedu_ci %in% 6:9 ~ 1,
+        pais_c %in% c("BOL","CHL","DOM") & aedu_ci %in% 6:8 ~ 1,
+        pais_c %in% c("BHS","ARG","ECU","MEX","URY","PAN","PRY") & aedu_ci %in% 6:9 ~ 1,
+        pais_c %in% c("BLZ", "SUR") & aedu_ci %in% 6:10 ~ 1,
+        pais_c == "TTO" & aedu_ci %in% 7:10 ~ 1,
         TRUE ~ 0
       ),
       
       # Define secondary high
       seco_alta = case_when(
-        pais_c %in% c("COL", "BRB","CRI","GTM","GUY","JAM","NIC","PER","VEN","SLV","HND") & aedu_ci %in% 10:11 ~ 1,
-        pais_c %in% c("BOL","CHL","DOM") & aedu_ci %in% 9:12 ~ 1,
-        pais_c %in% c("BRA", "BHS","ARG","ECU","MEX","URY","PAN","PRY") & aedu_ci %in% 10:12 ~ 1,
-        pais_c == "HTI" & aedu_ci %in% 10:13 ~ 1,
-        pais_c == "BLZ" & aedu_ci %in% 11:12 ~ 1,
-        pais_c == "SUR" & aedu_ci %in% 11:13 ~ 1,
-        pais_c == "TTO" & aedu_ci %in% 11:12 ~ 1,
+        pais_c %in% c("COL", "BRB","CRI","GTM","GUY","JAM","NIC","PER","VEN","SLV","HND") & aedu_ci %in% 9:11 ~ 1,
+        pais_c %in% c("BOL","CHL","DOM") & aedu_ci %in% 8:12 ~ 1,
+        pais_c %in% c("BRA", "BHS","ARG","ECU","MEX","URY","PAN","PRY") & aedu_ci %in% 9:12 ~ 1,
+        pais_c == "HTI" & aedu_ci %in% 9:13 ~ 1,
+        pais_c == "BLZ" & aedu_ci %in% 10:12 ~ 1,
+        pais_c == "SUR" & aedu_ci %in% 10:13 ~ 1,
+        pais_c == "TTO" & aedu_ci %in% 10:12 ~ 1,
         TRUE ~ 0
       ),
       
@@ -766,7 +766,7 @@ if (tipo == "encuestas") {
         
         # 7° a 8°
         pais_c %in% c("BOL", "CHL", "DOM") & edad_ci >= 12 & edad_ci <= 13 ~ 1,
-        pais_c %in% c("BOL", "CHL", "DOM") & !(edad_ci >= 12 & edad_ci <= 13) ~ 1, 
+        pais_c %in% c("BOL", "CHL", "DOM") & !(edad_ci >= 12 & edad_ci <= 13) ~ 0, 
         
         # 7° a 10°
         pais_c %in% c("SUR", "BLZ") & edad_ci >= 12 & edad_ci <= 15 ~ 1,
