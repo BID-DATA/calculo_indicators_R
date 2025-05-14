@@ -995,8 +995,7 @@ if (tipo == "encuestas") {
   data_filt <- data_filt %>%
     mutate(
       highest_degree = case_when(
-        nivel_edu == 1 ~ 0,  # Ninguno
-        nivel_edu == 2 | nivel_edu == 3 ~ 1,  # Primaria
+        nivel_edu %in% 1:3 ~ 1,  # Primaria
         nivel_edu %in% 4:5 ~ 2,  # Secundaria baja
         nivel_edu %in% 6:7 ~ 3,  # Secundaria alta
         nivel_edu == 8 ~ 4,  # Universitaria
