@@ -1023,7 +1023,7 @@ if (tipo == "encuestas") {
       TRUE ~ 0
     ),
     
-    age_term_sa_eo_ = case_when(
+    age_term_sa_eo = case_when(
       pais_c %in% c("COL", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & edad_ci %in% 17 ~ 1,
       pais_c %in% c("BRA", "BOL", "CHL", "DOM", "BHS", "TTO", "BLZ",
                     "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & edad_ci %in% 18 ~ 1,
