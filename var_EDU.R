@@ -1004,31 +1004,59 @@ if (tipo == "encuestas") {
     )  
   
   ## Terminación en edad oportuna ----
-  data_filt <- data_filt %>%
-    mutate(
-    age_term_p_eo= case_when(
-      pais_c %in% c("COL", "BRA") & edad_ci %in% 11 ~ 1,
+data_filt <- data_filt %>%
+  mutate(
+
+    # Edad oportuna para terminar primaria (al año siguiente del esperado)
+    age_term_p_eo = case_when(
+      pais_c %in% c("COL", "BRA") & edad_ci == 11 ~ 1,
       pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
-                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI", "BOL", "CHL", "DOM",
-                    "BLZ", "SUR") & edad_ci %in% 12 ~ 1,
-      pais == "TTO" & edad_ci %in% 13 ~ 1,
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI", "BOL", "CHL", "DOM", "BLZ", "SUR") & edad_ci == 12 ~ 1,
+      pais_c == "TTO" & edad_ci == 13 ~ 1,
       TRUE ~ 0
     ),
-      
+
+    # Edad oportuna para terminar secundaria baja
     age_term_sb_eo = case_when(
       pais_c %in% c("COL", "BRA", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
-                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & edad_ci %in% 15 ~ 1,
-      pais_c %in% c("BOL", "CHL", "DOM") & edad_ci %in% 14 ~ 1,
-      pais_c %in% c("BLZ", "SUR", "TTO") & edad_ci %in% 16 ~ 1,
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & edad_ci == 15 ~ 1,
+      pais_c %in% c("BOL", "CHL", "DOM") & edad_ci == 14 ~ 1,
+      pais_c %in% c("BLZ", "SUR", "TTO") & edad_ci == 16 ~ 1,
       TRUE ~ 0
     ),
-    
+
+    # Edad oportuna para terminar secundaria alta
     age_term_sa_eo = case_when(
-      pais_c %in% c("COL", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & edad_ci %in% 17 ~ 1,
-      pais_c %in% c("BRA", "BOL", "CHL", "DOM", "BHS", "TTO", "BLZ",
-                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & edad_ci %in% 18 ~ 1,
-      pais_c %in% c("HTI", "SUR") & edad_ci %in% 19 ~ 1,
+      pais_c %in% c("COL", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & edad_ci == 17 ~ 1,
+      pais_c %in% c("BRA", "BOL", "CHL", "DOM", "BHS", "TTO", "BLZ", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & edad_ci == 18 ~ 1,
+      pais_c %in% c("HTI", "SUR") & edad_ci == 19 ~ 1,
       TRUE ~ 0
-    ))
-      
+    ),
+
+    # Terminación en edad oportuna de primaria
+    term_eo_primaria = case_when(
+      pais_c %in% c("COL", "BRA") & age_term_p_eo == 1 & aedu_ci >= 5 ~ 1,
+      pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI", "BOL", "CHL", "DOM", "BLZ", "SUR") & age_term_p_eo == 1 & aedu_ci >= 6 ~ 1,
+      pais_c == "TTO" & age_term_p_eo == 1 & aedu_ci >= 7 ~ 1,
+      TRUE ~ NA_real_
+    ),
+
+    # Terminación en edad oportuna de secundaria baja
+    term_eo_secbaja = case_when(
+      pais_c %in% c("COL", "BRA", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & age_term_sb_eo == 1 & aedu_ci >= 9 ~ 1,
+      pais_c %in% c("BOL", "CHL", "DOM") & age_term_sb_eo == 1 & aedu_ci >= 8 ~ 1,
+      pais_c %in% c("BLZ", "SUR", "TTO") & age_term_sb_eo == 1 & aedu_ci >= 10 ~ 1,
+      TRUE ~ NA_real_
+    ),
+
+    # Terminación en edad oportuna de secundaria alta
+    term_eo_secalta = case_when(
+      pais_c %in% c("COL", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & age_term_sa_eo == 1 & aedu_ci >= 11 ~ 1,
+      pais_c %in% c("BRA", "BOL", "CHL", "DOM", "BHS", "TTO", "BLZ", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & age_term_sa_eo == 1 & aedu_ci >= 12 ~ 1,
+      pais_c %in% c("HTI", "SUR") & age_term_sa_eo == 1 & aedu_ci >= 13 ~ 1,
+      TRUE ~ NA_real_
+    )
+  )
 }
