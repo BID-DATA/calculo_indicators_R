@@ -1007,29 +1007,29 @@ if (tipo == "encuestas") {
 data_filt <- data_filt %>%
   mutate(
 
-    # Edad oportuna para terminar primaria (al año siguiente del esperado)
+    # Edad oportuna para terminar primaria (edad esperada de ingreso +2)
     age_term_p_eo = case_when(
-      pais_c %in% c("COL", "BRA") & edad_ci == 11 ~ 1,
+      pais_c %in% c("COL", "BRA") & edad_ci == 12 ~ 1,
       pais_c %in% c("BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
-                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI", "BOL", "CHL", "DOM", "BLZ", "SUR") & edad_ci == 12 ~ 1,
-      pais_c == "TTO" & edad_ci == 13 ~ 1,
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI", "BOL", "CHL", "DOM", "BLZ", "SUR") & edad_ci == 13 ~ 1,
+      pais_c == "TTO" & edad_ci == 14 ~ 1,
       TRUE ~ 0
     ),
 
     # Edad oportuna para terminar secundaria baja
     age_term_sb_eo = case_when(
       pais_c %in% c("COL", "BRA", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND", "BHS", 
-                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & edad_ci == 15 ~ 1,
-      pais_c %in% c("BOL", "CHL", "DOM") & edad_ci == 14 ~ 1,
-      pais_c %in% c("BLZ", "SUR", "TTO") & edad_ci == 16 ~ 1,
+                    "ARG", "ECU", "MEX", "URY", "PAN", "PRY", "HTI") & edad_ci == 16 ~ 1,
+      pais_c %in% c("BOL", "CHL", "DOM") & edad_ci == 15 ~ 1,
+      pais_c %in% c("BLZ", "SUR", "TTO") & edad_ci == 17 ~ 1,
       TRUE ~ 0
     ),
 
     # Edad oportuna para terminar secundaria alta
     age_term_sa_eo = case_when(
-      pais_c %in% c("COL", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & edad_ci == 17 ~ 1,
-      pais_c %in% c("BRA", "BOL", "CHL", "DOM", "BHS", "TTO", "BLZ", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & edad_ci == 18 ~ 1,
-      pais_c %in% c("HTI", "SUR") & edad_ci == 19 ~ 1,
+      pais_c %in% c("COL", "BRB", "CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & edad_ci == 18 ~ 1,
+      pais_c %in% c("BRA", "BOL", "CHL", "DOM", "BHS", "TTO", "BLZ", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & edad_ci == 19 ~ 1,
+      pais_c %in% c("HTI", "SUR") & edad_ci == 20 ~ 1,
       TRUE ~ 0
     ),
 
