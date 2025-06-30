@@ -850,7 +850,7 @@ if (tipo == "encuestas") {
         
         # 8°
         pais_c %in% c("BOL", "CHL", "DOM") & (aedu_ci>=8 & age_term_sb_c == 1) ~ 1,
-        pais_c %in% c("BOL", "CHL", "DOM") & !(aedu_ci>=8 & age_term_sb_c == 1) ~ 1, 
+        pais_c %in% c("BOL", "CHL", "DOM") & !(aedu_ci>=8 & age_term_sb_c == 1) ~ 0, 
         
         # 10°
         pais_c %in% c("SUR", "BLZ", "TTO") & (aedu_ci>=10 & age_term_sb_c == 1) ~ 1,
