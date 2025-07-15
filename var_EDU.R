@@ -875,7 +875,7 @@ if (tipo == "encuestas") {
       
       # Colombia (COL)
       nivel_edu = case_when(
-        pais_c == "COL" & aedu_ci <= 4 ~ 1,   # Primaria incompleta
+        pais_c == "COL" & aedu_ci %in% 1:4 ~ 1,   # Primaria incompleta
         pais_c == "COL" & aedu_ci == 5 ~ 2,   # Primaria completa
         pais_c == "COL" & aedu_ci %in% 6:8 ~ 3, # Secundaria ciclo 1 incompleta
         pais_c == "COL" & aedu_ci == 9 ~ 4,   # Secundaria ciclo 1 completa
@@ -886,7 +886,7 @@ if (tipo == "encuestas") {
       
       # Brazil (BRA)
       nivel_edu = case_when(
-        pais_c == "BRA" & aedu_ci <= 4 ~ 1,
+        pais_c == "BRA" & aedu_ci %in% 1:4 ~ 1,
         pais_c == "BRA" & aedu_ci == 5 ~ 2,
         pais_c == "BRA" & aedu_ci %in% 6:8 ~ 3,
         pais_c == "BRA" & aedu_ci == 9 ~ 4,
@@ -897,7 +897,7 @@ if (tipo == "encuestas") {
       
       # Bolivia (BOL), Chile (CHL), Dominican Republic (DOM)
       nivel_edu = case_when(
-        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci <= 5 ~ 1,
+        pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci %in% 1:5 ~ 1,
         pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci == 6 ~ 2,
         pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci == 7 ~ 3,
         pais_c %in% c("BOL", "CHL", "DOM") & aedu_ci == 8 ~ 4,
@@ -908,7 +908,7 @@ if (tipo == "encuestas") {
       
       # Other countries like BHS, ARG, ECU, MEX, URY, PAN, PRY
       nivel_edu = case_when(
-        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci <= 5 ~ 1,
+        pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci %in% 1:5 ~ 1,
         pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci == 6 ~ 2,
         pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci %in% 7:8 ~ 3,
         pais_c %in% c("BHS", "ARG", "ECU", "MEX", "URY", "PAN", "PRY") & aedu_ci == 9 ~ 4,
@@ -919,7 +919,7 @@ if (tipo == "encuestas") {
       
       # Other countries: CRI, BRB, GTM, GUY, JAM, NIC, PER, VEN, SLV, HND
       nivel_edu = case_when(
-        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci <= 5 ~ 1,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci %in% 1:5 ~ 1,
         pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci == 6 ~ 2,
         pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci %in% 7:8 ~ 3,
         pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci == 9 ~ 4,
@@ -930,7 +930,7 @@ if (tipo == "encuestas") {
       
       # Suriname (SUR)
       nivel_edu = case_when(
-        pais_c == "SUR" & aedu_ci <= 5 ~ 1,
+        pais_c == "SUR" & aedu_ci %in% 1:5 ~ 1,
         pais_c == "SUR" & aedu_ci == 6 ~ 2,
         pais_c == "SUR" & aedu_ci %in% 7:9 ~ 3,
         pais_c == "SUR" & aedu_ci == 10 ~ 4,
@@ -941,7 +941,7 @@ if (tipo == "encuestas") {
       
       # Trinidad and Tobago (TTO)
       nivel_edu = case_when(
-        pais_c == "TTO" & aedu_ci <= 6 ~ 1,
+        pais_c == "TTO" & aedu_ci %in% 1:6 ~ 1,
         pais_c == "TTO" & aedu_ci == 7 ~ 2,
         pais_c == "TTO" & aedu_ci %in% 8:9 ~ 3,
         pais_c == "TTO" & aedu_ci == 10 ~ 4,
@@ -952,7 +952,7 @@ if (tipo == "encuestas") {
       
       # Barbados (BRB)
       nivel_edu = case_when(
-        pais_c == "BRB" & aedu_ci <= 5 ~ 1,
+        pais_c == "BRB" & aedu_ci %in% 1:5 ~ 1,
         pais_c == "BRB" & aedu_ci == 6 ~ 2,
         pais_c == "BRB" & aedu_ci %in% 7:8 ~ 3,
         pais_c == "BRB" & aedu_ci == 9 ~ 4,
@@ -963,7 +963,7 @@ if (tipo == "encuestas") {
       
       # Haiti (HTI)
       nivel_edu = case_when(
-        pais_c == "HTI" & aedu_ci <= 5 ~ 1,
+        pais_c == "HTI" & aedu_ci %in% 1:5 ~ 1,
         pais_c == "HTI" & aedu_ci == 6 ~ 2,
         pais_c == "HTI" & aedu_ci %in% 7:8 ~ 3,
         pais_c == "HTI" & aedu_ci == 9 ~ 4,
@@ -974,7 +974,7 @@ if (tipo == "encuestas") {
       
       # Belize (BLZ)
       nivel_edu = case_when(
-        pais_c == "BLZ" & aedu_ci <= 5 ~ 1,
+        pais_c == "BLZ" & aedu_ci %in% 1:5 ~ 1,
         pais_c == "BLZ" & aedu_ci == 6 ~ 2,
         pais_c == "BLZ" & aedu_ci %in% 7:9 ~ 3,
         pais_c == "BLZ" & aedu_ci == 10 ~ 4,
@@ -985,6 +985,7 @@ if (tipo == "encuestas") {
       
       # Adding superior education (eduui_ci and eduuc_ci)
       nivel_edu = case_when(
+        aedu_ci == 0 ~ 0, # Sin educación formal
         eduui_ci == 1 ~ 7,  # Superior incomplete
         eduuc_ci == 1 ~ 8,  # Superior complete
         TRUE ~ nivel_edu
