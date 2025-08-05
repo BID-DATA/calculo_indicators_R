@@ -923,8 +923,8 @@ if (tipo == "encuestas") {
         pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci == 6 ~ 2,
         pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci %in% 7:8 ~ 3,
         pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci == 9 ~ 4,
-        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci %in% 10:11 ~ 5,
-        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci >= 12 ~ 6,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci ==10 ~ 5,
+        pais_c %in% c("CRI", "GTM", "GUY", "JAM", "NIC", "PER", "VEN", "SLV", "HND") & aedu_ci >= 11 ~ 6,
         TRUE ~ nivel_edu
       ),
       
