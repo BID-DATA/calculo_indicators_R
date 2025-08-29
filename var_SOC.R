@@ -123,12 +123,15 @@ if (tipo == "encuestas") {
   
   data_filt <- data_filt %>%  
     mutate(jefa_ci = if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
-           ylm_ci = as.double(ylm_ci), 
+           ylm_ci = as.double(ylm_ci),
+           ylnm_ci = as.double(ylnm_ci),
            ynlm_ci = as.double(ynlm_ci),
            pob_sfd = if_else(sexo_ci == 2 | afroind_ci == 1 | afroind_ci == 2 | dis_ci == 1, 1, 0),
            pob18_ci = as.numeric(edad_ci <= 18),
            pob65_ci = as.numeric(edad_ci >= 65),
            miembros_ci = as.numeric(miembros_ci == 1),
+           ylab_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci), na.rm = TRUE)),
+           ylab_ci = ifelse(is.na(ylm_ci) & is.na(ylnm_ci), NA_real_, ylab_ci),
            ytot_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci, ynlm_ci, ynlnm_ci), na.rm = TRUE)),
            ytot_ci = ifelse(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci),
            yallsr18 = if_else(edad_ci >= 18, ytot_ci, NA_real_),
@@ -139,7 +142,8 @@ if (tipo == "encuestas") {
                                edad_ci>=65 & edad_ci<99 ~"65+", 
                                TRUE ~NA_character_)) %>%
     group_by(idh_ch) %>%
-    mutate(ytot_ch = sum(ytot_ci*(miembros_ci == 1), na.rm = TRUE),
+    mutate(ylab_ch = sum(ylab_ci*(miembros_ci == 1), na.rm = TRUE),
+           ytot_ch = sum(ytot_ci*(miembros_ci == 1), na.rm = TRUE),
            hhyallsr = if_else(miembros_ci == 1, sum(yallsr18, na.rm = TRUE), NA_real_),
            ywomen = sum(yallsr18[sexo_ci == 2], na.rm = TRUE),
            hhywomen = max(ywomen, na.rm = TRUE),
@@ -152,10 +156,26 @@ if (tipo == "encuestas") {
     ungroup() %>% 
     # Mutate to compute additional variables
     mutate(
-      # Income per capita definition 
+      # Income per capita definition
+      pc_ylab_ch = ifelse(nmiembros_ch > 0, ylab_ch / nmiembros_ch, NA),
+      pc_ylab_ch = ifelse(pc_ylab_ch <= 0, NA, pc_ylab_ch),
       pc_ytot_ch = ifelse(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
       pc_ytot_ch = ifelse(pc_ytot_ch <= 0, NA, pc_ytot_ch),
-      # Define area and sex based on zona_c and sexo_ci respectively, 
+      # Define area and sex based on zona_c and sexo_ci respectively,
+      lab_income_category = case_when(
+        (pc_ylab_ch < lp31_2011 ~ "extreme"),  # extreme poverty
+        (pc_ylab_ch >= lp31_2011) & (pc_ylab_ch < lp5_2011) ~ "poverty",  # poverty
+        (pc_ylab_ch >= lp5_2011) & (pc_ylab_ch < lp31_2011*4) ~ "vulnerable",  # vulnerable
+        (pc_ylab_ch >= lp31_2011*4) & (pc_ylab_ch < lp31_2011*20) ~ "middle",  # middle class
+        (pc_ylab_ch >= lp31_2011*20) ~ "rich",
+        TRUE ~ NA_character_),
+      lab_income_category_lp2017 = case_when(
+        (pc_ylab_ch < lp365_2017 ~ "extreme"),  # extreme poverty
+        (pc_ylab_ch >= lp365_2017) & (pc_ylab_ch < lp685_2017) ~ "poverty",  # poverty
+        (pc_ylab_ch >= lp685_2017) & (pc_ylab_ch < lp14_2017) ~ "vulnerable",  # vulnerable
+        (pc_ylab_ch >= lp14_2017) & (pc_ylab_ch < lp81_2017) ~ "middle",  # middle class
+        (pc_ylab_ch >= lp81_2017) ~ "rich", 
+        TRUE ~ NA_character_),  # rich,
       income_category = case_when(
         (pc_ytot_ch < lp31_2011 ~ "extreme"),  # extreme poverty
         (pc_ytot_ch >= lp31_2011) & (pc_ytot_ch < lp5_2011) ~ "poverty",  # poverty
