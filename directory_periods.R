@@ -30,8 +30,13 @@ round <- planificacionSurveysPivot %>%
 survey <- planificacionSurveysPivot %>% 
           filter(`País`== pais & `year`== anio & availability ==1) %>% 
           pull(Encuesta)
-
-base <- paste("Z://harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")
+if (pais=="VEN" & anio==2021){
+  
+  base <- paste("//sapidbshares.file.core.windows.net//idbrestrictedshares//SCL_DATAFILES_RESTRICTED//harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")
+}
+else {
+  base <- paste("Z://harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")  
+}
 # return database address
 return(base)
 
