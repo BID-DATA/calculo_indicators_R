@@ -60,11 +60,11 @@ if (tipo == "encuestas") {
 
 #### Compute intermediate variables  ####
 message(paste("Loading intermediate variables ",pais,": ", anio))
-source("var_LMK.R")
+  #source("var_LMK.R")
 
-source("var_EDU.R")
+  #source("var_EDU.R")
 
-source("var_GDI.R")
+  #source("var_GDI.R")
 
 source("var_SOC.R")
 

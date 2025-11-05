@@ -10,8 +10,8 @@ library(parallel)
 library(multidplyr)
 library(reldist)
 
-pais<-"DOM"
-anio<-"2023"
+pais<-"VEN"
+anio<-"2021"
 
 # select between "censos"/"encuestas"
 tipo<-"encuestas"

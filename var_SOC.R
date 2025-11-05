@@ -119,262 +119,89 @@ start_time <- Sys.time()
 if (tipo == "encuestas") {
   
   # creating a vector with initial column names
-
+  povertyLinesUpdated <- read_dta("Inputs/masterdata.dta")  
+  
+  data_filt <- left_join(data_filt, povertyLinesUpdated, by = c("pais_c" = "iso_3","anio_c" = "year"))
   
   data_filt <- data_filt %>%  
-    mutate(jefa_ci = if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
-           ylm_ci = as.double(ylm_ci),
+    mutate(ylm_ci = as.double(ylm_ci),
            ylnm_ci = as.double(ylnm_ci),
            ynlm_ci = as.double(ynlm_ci),
-           pob_sfd = if_else(sexo_ci == 2 | afroind_ci == 1 | afroind_ci == 2 | dis_ci == 1, 1, 0),
-           pob18_ci = as.numeric(edad_ci <= 18),
-           pob65_ci = as.numeric(edad_ci >= 65),
            miembros_ci = as.numeric(miembros_ci == 1),
-           ylab_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci), na.rm = TRUE)),
-           ylab_ci = ifelse(is.na(ylm_ci) & is.na(ylnm_ci), NA_real_, ylab_ci),
            ytot_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci, ynlm_ci, ynlnm_ci), na.rm = TRUE)),
-           ytot_ci = ifelse(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci),
-           yallsr18 = if_else(edad_ci >= 18, ytot_ci, NA_real_),
-           age_scl = case_when(edad_ci>=0 & edad_ci<5 ~"00_04",
-                               edad_ci>=5 & edad_ci<15 ~"05_14",
-                               edad_ci>=15 & edad_ci<25 ~"15_24",
-                               edad_ci>=25 & edad_ci<65 ~"25_64",
-                               edad_ci>=65 & edad_ci<99 ~"65+", 
-                               TRUE ~NA_character_)) %>%
+           ytot_ci = ifelse(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci)
+           ) %>%
     group_by(idh_ch) %>%
-    mutate(ylab_ch = sum(ylab_ci*(miembros_ci == 1), na.rm = TRUE),
-           ytot_ch = sum(ytot_ci*(miembros_ci == 1), na.rm = TRUE),
-           hhyallsr = if_else(miembros_ci == 1, sum(yallsr18, na.rm = TRUE), NA_real_),
-           ywomen = sum(yallsr18[sexo_ci == 2], na.rm = TRUE),
-           hhywomen = max(ywomen, na.rm = TRUE),
-           shareylmfem_ch = hhywomen / hhyallsr,
-           jefa_ch = if_else(jefe_ci == 1, sum(jefa_ci, na.rm = TRUE), 0),
-           miembro6_ch = as.numeric(sum(edad_ci < 6 & relacion_ci > 0 & relacion_ci <= 5) > 0),
-           miembro65_ch = as.numeric(sum(edad_ci >= 65 & relacion_ci > 0 & relacion_ci <= 5) > 0),
-           miembro6y16_ch = as.numeric(sum(edad_ci >=6 & edad_ci <=16  & relacion_ci > 0 & relacion_ci <= 5) > 0),
-           perceptor_ch = sum(as.numeric(ytot_ci > 0 & miembros_ci>0))) %>%
+    mutate(ytot_ch = sum(ytot_ci*(miembros_ci == 1), na.rm = TRUE)
+) %>%
     ungroup() %>% 
     # Mutate to compute additional variables
     mutate(
       # Income per capita definition
-      pc_ylab_ch = ifelse(nmiembros_ch > 0, ylab_ch / nmiembros_ch, NA),
-      pc_ylab_ch = ifelse(pc_ylab_ch <= 0, NA, pc_ylab_ch),
       pc_ytot_ch = ifelse(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
       pc_ytot_ch = ifelse(pc_ytot_ch <= 0, NA, pc_ytot_ch),
       # Define area and sex based on zona_c and sexo_ci respectively,
-      lab_income_category = case_when(
-        (pc_ylab_ch < lp31_2011 ~ "extreme"),  # extreme poverty
-        (pc_ylab_ch >= lp31_2011) & (pc_ylab_ch < lp5_2011) ~ "poverty",  # poverty
-        (pc_ylab_ch >= lp5_2011) & (pc_ylab_ch < lp31_2011*4) ~ "vulnerable",  # vulnerable
-        (pc_ylab_ch >= lp31_2011*4) & (pc_ylab_ch < lp31_2011*20) ~ "middle",  # middle class
-        (pc_ylab_ch >= lp31_2011*20) ~ "rich",
-        TRUE ~ NA_character_),
-      lab_income_category_lp2017 = case_when(
-        (pc_ylab_ch < lp365_2017 ~ "extreme"),  # extreme poverty
-        (pc_ylab_ch >= lp365_2017) & (pc_ylab_ch < lp685_2017) ~ "poverty",  # poverty
-        (pc_ylab_ch >= lp685_2017) & (pc_ylab_ch < lp14_2017) ~ "vulnerable",  # vulnerable
-        (pc_ylab_ch >= lp14_2017) & (pc_ylab_ch < lp81_2017) ~ "middle",  # middle class
-        (pc_ylab_ch >= lp81_2017) ~ "rich", 
-        TRUE ~ NA_character_),  # rich,
       income_category = case_when(
-        (pc_ytot_ch < lp31_2011 ~ "extreme"),  # extreme poverty
-        (pc_ytot_ch >= lp31_2011) & (pc_ytot_ch < lp5_2011) ~ "poverty",  # poverty
-        (pc_ytot_ch >= lp5_2011) & (pc_ytot_ch < lp31_2011*4) ~ "vulnerable",  # vulnerable
-        (pc_ytot_ch >= lp31_2011*4) & (pc_ytot_ch < lp31_2011*20) ~ "middle",  # middle class
-        (pc_ytot_ch >= lp31_2011*20) ~ "rich", 
+        (pc_ytot_ch < lp31_2011.x ~ "extreme"),  # extreme poverty
+        (pc_ytot_ch >= lp31_2011.x) & (pc_ytot_ch < lp5_2011.x) ~ "poverty",  # poverty
+        (pc_ytot_ch >= lp5_2011.x) & (pc_ytot_ch < lp31_2011.x*4) ~ "vulnerable",  # vulnerable
+        (pc_ytot_ch >= lp31_2011.x*4) & (pc_ytot_ch < lp31_2011.x*20) ~ "middle",  # middle class
+        (pc_ytot_ch >= lp31_2011.x*20) ~ "rich", 
+        TRUE ~ NA_character_),  # rich,
+      income_category_2011_CPI = case_when(
+        (pc_ytot_ch < lp31_2011_imf ~ "extreme"),  # extreme poverty
+        (pc_ytot_ch >= lp31_2011_imf) & (pc_ytot_ch < lp5_2011_imf) ~ "poverty",  # poverty
+        (pc_ytot_ch >= lp5_2011_imf) & (pc_ytot_ch < lp31_2011_imf*4) ~ "vulnerable",  # vulnerable
+        (pc_ytot_ch >= lp31_2011_imf*4) & (pc_ytot_ch < lp31_2011_imf*20) ~ "middle",  # middle class
+        (pc_ytot_ch >= lp31_2011_imf*20) ~ "rich", 
         TRUE ~ NA_character_),  # rich,
       income_category_lp2017 = case_when(
-        (pc_ytot_ch < lp365_2017 ~ "extreme"),  # extreme poverty
-        (pc_ytot_ch >= lp365_2017) & (pc_ytot_ch < lp685_2017) ~ "poverty",  # poverty
-        (pc_ytot_ch >= lp685_2017) & (pc_ytot_ch < lp14_2017) ~ "vulnerable",  # vulnerable
-        (pc_ytot_ch >= lp14_2017) & (pc_ytot_ch < lp81_2017) ~ "middle",  # middle class
-        (pc_ytot_ch >= lp81_2017) ~ "rich", 
+        (pc_ytot_ch < lp365_2017.x ~ "extreme"),  # extreme poverty
+        (pc_ytot_ch >= lp365_2017.x) & (pc_ytot_ch < lp685_2017.x) ~ "poverty",  # poverty
+        (pc_ytot_ch >= lp685_2017.x) & (pc_ytot_ch < lp14_2017.x) ~ "vulnerable",  # vulnerable
+        (pc_ytot_ch >= lp14_2017.x) & (pc_ytot_ch < lp81_2017.x) ~ "middle",  # middle class
+        (pc_ytot_ch >= lp81_2017.x) ~ "rich", 
         TRUE ~ NA_character_),  # rich,
-      area = case_when(
-        zona_c == 1 ~ "urban", 
-        zona_c == 0 ~ "rural", 
-        TRUE ~ NA_character_
-      ),
-      sex = case_when(
-        sexo_ci == 2 ~ "women",
-        sexo_ci == 1 ~ "men", 
-        TRUE ~ NA_character_
-      ),
-      # Calculate hhfem_ch
-      hhfem_ch = ifelse(hhywomen >= .5, 1, ifelse(is.na(yallsr18), NA, 0)),
-      # remesas
-      indexrem = ifelse(jefe_ci == 1 & !is.na(remesas_ch) & remesas_ch > 0, 1, ifelse(is.na(remesas_ch),NA_real_,0)),
-      ylmprixh = ylmpri_ci / (horaspri_ci * 4.34),
-      #vivienda 
-      hacinamiento_ch = nmiembros_ch / cuartos_ch,
-      #demografia dependencia 
-      depen_ch = nmiembros_ch / perceptor_ch
+      income_category_lp2017_CPI = case_when(
+        (pc_ytot_ch < lp365_2017_imf ~ "extreme"),  # extreme poverty
+        (pc_ytot_ch >= lp365_2017_imf) & (pc_ytot_ch < lp685_2017_imf) ~ "poverty",  # poverty
+        (pc_ytot_ch >= lp685_2017_imf) & (pc_ytot_ch < lp14_2017_imf) ~ "vulnerable",  # vulnerable
+        (pc_ytot_ch >= lp14_2017_imf) & (pc_ytot_ch < lp81_2017_imf) ~ "middle",  # middle class
+        (pc_ytot_ch >= lp81_2017_imf) ~ "rich", 
+        TRUE ~ NA_character_),  # rich,      
+      income_category_lp2021Jillie = case_when(
+        (pc_ytot_ch < lp420_2021_old ~ "extreme"),  # extreme poverty
+        (pc_ytot_ch >= lp420_2021_old) & (pc_ytot_ch < lp830_2021_old) ~ "poverty",  # poverty
+        (pc_ytot_ch >= lp830_2021_old) & (pc_ytot_ch < lp420_2021_old*4) ~ "vulnerable",  # vulnerable
+        (pc_ytot_ch >= lp420_2021_old*4) & (pc_ytot_ch < lp420_2021_old*20) ~ "middle",  # middle class
+        (pc_ytot_ch >= lp420_2021_old*20) ~ "rich", 
+        TRUE ~ NA_character_), # rich,
+      income_category_lp2021IMF = case_when(
+        (pc_ytot_ch < lp420_2021_imf ~ "extreme"),  # extreme poverty
+        (pc_ytot_ch >= lp420_2021_imf) & (pc_ytot_ch < lp830_2021_imf) ~ "poverty",  # poverty
+        (pc_ytot_ch >= lp830_2021_imf) & (pc_ytot_ch < lp420_2021_imf*4) ~ "vulnerable",  # vulnerable
+        (pc_ytot_ch >= lp420_2021_imf*4) & (pc_ytot_ch < lp420_2021_imf*20) ~ "middle",  # middle class
+        (pc_ytot_ch >= lp420_2021_imf*20) ~ "rich", 
+        TRUE ~ NA_character_),
+      income_category_lp2021IMF_ICP = case_when(
+        (pc_ytot_ch < lp420_2021_imf_icp ~ "extreme"),  # extreme poverty
+        (pc_ytot_ch >= lp420_2021_imf_icp) & (pc_ytot_ch < lp830_2021_imf_icp) ~ "poverty",  # poverty
+        (pc_ytot_ch >= lp830_2021_imf_icp) & (pc_ytot_ch < lp420_2021_imf_icp*4) ~ "vulnerable",  # vulnerable
+        (pc_ytot_ch >= lp420_2021_imf_icp*4) & (pc_ytot_ch < lp420_2021_imf_icp*20) ~ "middle",  # middle class
+        (pc_ytot_ch >= lp420_2021_imf_icp*20) ~ "rich", 
+        TRUE ~ NA_character_)
     ) 
+  #weighted_table <- wtd.table(x = data_filt$income_category_lp2021, weights = data_filt$factor_ch)
+  #print(weighted_table)
+  # Calculate percentages
+  #percentages <- (weighted_table / sum(weighted_table)) * 100
+  #print(percentages)  
   
   # Calculate quintiles
   # sum all the values of factor ci where ytot"
   # Calculate quintiles
-  # sum all the values of factor ci where ytot"
-  data_filt <- data_filt %>%
-    arrange(pc_ytot_ch,idh_ch) %>%
-    mutate(suma1 = ifelse(!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci),factor_ci,0),
-           suma2 = cumsum(suma1),
-           cumulative_weight_prop = suma2 / sum(suma1, na.rm=TRUE)) 
-  
-  countQuintile <- data_filt %>% 
-    filter(cumulative_weight_prop!=0) %>% 
-    count() %>% pull()
-  
-  if (countQuintile != 0) {
-  data_filt <- data_filt %>%
-    mutate(
-      quintile = case_when(
-        (cumulative_weight_prop < 0.20)&!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci) ~ "quintile_1",
-        (cumulative_weight_prop < 0.40)&!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci) ~ "quintile_2",
-        (cumulative_weight_prop < 0.60)&!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci) ~ "quintile_3",
-        (cumulative_weight_prop < 0.80)&!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci) ~ "quintile_4",
-        (cumulative_weight_prop >= 0.80)&!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci) ~ "quintile_5",
-        TRUE ~ NA_character_
-      )
-    )
-  
-  # Quintile_ci urban
-  data_filt <- data_filt %>%
-    arrange(pc_ytot_ch,idh_ch) %>%
-    mutate(suma1 = ifelse(zona_c==1 & !is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci),factor_ci,0),
-           suma2 = cumsum(suma1),
-           cumulative_weight_prop = suma2 / sum(suma1, na.rm=TRUE)) %>%
-    mutate(
-      quintile_ci_urban = case_when(
-        cumulative_weight_prop < 0.20 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_1_urban",
-        cumulative_weight_prop < 0.40 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_2_urban",
-        cumulative_weight_prop < 0.60 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_3_urban",
-        cumulative_weight_prop < 0.80 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_4_urban",
-        cumulative_weight_prop >= 0.80 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_5_urban",
-        TRUE ~ NA_character_
-      )
-    )
-  
-  # Quintile rural
-  data_filt <- data_filt %>%
-    arrange(pc_ytot_ch,idh_ch) %>%
-    mutate(suma1 = ifelse(zona_c==0 & !is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci),factor_ci,0),
-           suma2 = cumsum(suma1),
-           cumulative_weight_prop_rural = suma2 / sum(suma1, na.rm=TRUE)) %>%
-    mutate(
-      quintile_ci_rural = case_when(
-        cumulative_weight_prop_rural < 0.20 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_1_rural",
-        cumulative_weight_prop_rural < 0.40 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_2_rural",
-        cumulative_weight_prop_rural < 0.60 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_3_rural",
-        cumulative_weight_prop_rural < 0.80 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_4_rural",
-        cumulative_weight_prop_rural >= 0.80 & zona_c==0  &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_5_rural",
-        TRUE ~ NA_character_
-      )
-    )
-  
-  # quintile_ch
-  data_filt <- data_filt %>%
-    arrange(pc_ytot_ch,idh_ch) %>%
-    mutate(suma1 = ifelse(jefe_ci==1 & !is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci),factor_ci,0),
-           suma2 = cumsum(suma1),
-           cumulative_weight_prop2 = (suma2 / sum(suma1, na.rm=TRUE))) %>%
-    mutate(
-      quintile_ch = case_when(
-        cumulative_weight_prop2 < 0.20 & jefe_ci==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_1_ch",
-        cumulative_weight_prop2 < 0.40 & jefe_ci==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_2_ch",
-        cumulative_weight_prop2 < 0.60 & jefe_ci==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_3_ch",
-        cumulative_weight_prop2 < 0.80 & jefe_ci==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_4_ch",
-        cumulative_weight_prop2 >= 0.80 & jefe_ci==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_5_ch",
-        TRUE ~ NA_character_
-      )
-    )
-  
-  # quintile_ch_urban
-  data_filt <- data_filt %>%
-    arrange(pc_ytot_ch,idh_ch) %>%
-    mutate(suma1 = ifelse(jefe_ci==1 & zona_c==1 & !is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci),factor_ci,0),
-           suma2 = cumsum(suma1),
-           cumulative_weight_prop2 = (suma2 / sum(suma1, na.rm=TRUE))) %>%
-    mutate(
-      quintile_ch_urban = case_when(
-        cumulative_weight_prop2 < 0.20 & jefe_ci==1 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_1_ch_urban",
-        cumulative_weight_prop2 < 0.40 & jefe_ci==1 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_2_ch_urban",
-        cumulative_weight_prop2 < 0.60 & jefe_ci==1 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_3_ch_urban",
-        cumulative_weight_prop2 < 0.80 & jefe_ci==1 & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_4_ch_urban",
-        cumulative_weight_prop2 >= 0.80 & jefe_ci==1  & zona_c==1 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_5_ch_urban",
-        TRUE ~ NA_character_
-      )
-    )
-  
-  # quintile_ch_rural
-  data_filt <- data_filt %>%
-    arrange(pc_ytot_ch,idh_ch) %>%
-    mutate(suma1 = ifelse(jefe_ci==1 & zona_c==0 & !is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci),factor_ci,0),
-           suma2 = cumsum(suma1),
-           cumulative_weight_prop2 = (suma2 / sum(suma1, na.rm=TRUE))) %>%
-    mutate(
-      quintile_ch_rural = case_when(
-        cumulative_weight_prop2 < 0.20 & jefe_ci==1 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_1_ch_rural",
-        cumulative_weight_prop2 < 0.40 & jefe_ci==1 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_2_ch_rural",
-        cumulative_weight_prop2 < 0.60 & jefe_ci==1 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_3_ch_rural",
-        cumulative_weight_prop2 < 0.80 & jefe_ci==1 & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_4_ch_rural",
-        cumulative_weight_prop2 >= 0.80 & jefe_ci==1  & zona_c==0 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ "quintile_5_ch_rural",
-        TRUE ~ NA_character_
-      )
-    )
-  
-  # Calculate decile points
-  # sum all the values of factor ci where ytot"
-  # decile
-  data_filt <- data_filt %>%
-    arrange(pc_ytot_ch,idh_ch) %>%
-    mutate(suma1 = ifelse(!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci),factor_ci,0),
-           suma2 = cumsum(suma1),
-           cumulative_weight_prop = suma2 / sum(suma1, na.rm=TRUE)) %>%
-    mutate(
-      decile_ci = case_when(
-        cumulative_weight_prop<0.10 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci) ~ 1,
-        cumulative_weight_prop< 0.20 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci) ~ 2,
-        cumulative_weight_prop < 0.30 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 3,
-        cumulative_weight_prop < 0.40 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 4,
-        cumulative_weight_prop < 0.50 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 5,
-        cumulative_weight_prop < 0.60 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 6,
-        cumulative_weight_prop < 0.70 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 7,
-        cumulative_weight_prop < 0.80 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 8,
-        cumulative_weight_prop <0.90 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 9,
-        cumulative_weight_prop >=0.90 &!is.na(pc_ytot_ch)&(pc_ytot_ch>0)&!is.na(factor_ci)~ 10,
-        TRUE ~ NA_real_
-      )
-    )
-  
-  
-  data_filt <- data_filt %>% group_by(decile_ci) %>%
-    mutate(
-      isminv2 = ifelse(!is.na(pc_ytot_ch) & !is.infinite(pc_ytot_ch) ,min(pc_ytot_ch, na.rm = T),NA_real_)
-    ) %>%
-    ungroup() %>%
-    mutate(percentil_points = case_when(
-      decile_ci == 2 & (isminv2 == pc_ytot_ch) ~ 10,
-      decile_ci == 6 & (isminv2 == pc_ytot_ch) ~ 50,
-      decile_ci == 10 & (isminv2 == pc_ytot_ch) ~ 90,
-      TRUE ~ NA_real_
-    ))
-  
-  }
-  
-  if (countQuintile == 0) {
-    
-    data_filt <- data_filt %>%
-      mutate(quintile=NA_real_,
-             quintile_ci_urban = NA_real_,
-             quintile_ci_rural = NA_real_,
-             quintile_ch = NA_real_,
-             quintile_ch_urban = NA_real_,
-             quintile_ch_rural = NA_real_,
-             percentil_points = 0
-      )
-    
-  }
+
+
   data_filt <- data_filt %>% rename(isoalpha3 = pais_c,
                                     year = anio_c)
   
