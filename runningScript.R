@@ -10,11 +10,11 @@ library(parallel)
 library(multidplyr)
 library(reldist)
 
-pais<-"VEN"
-anio<-"2021"
+pais<-"ARG"
+anio<-"2010"
 
 # select between "censos"/"encuestas"
-tipo<-"encuestas"
+tipo<-"censos"
 
 # select between country or ine01 for surveys and country or geolevel1 for census
 geoLevel <- "country"
@@ -23,12 +23,7 @@ rm("data_scl","data_total","data_aux")
 gc()
 
 
-source("scl_indicators.R")
-if (tipo == "encuestas") {
-  write.csv(data_total, paste("Outputs/indicadores_encuestas_hogares_", pais,"_",anio,".csv",sep = ""), row.names=FALSE)
-  rm("data_scl","data_total","data_aux")
-  gc()
-}
+source("scl_indicatorsDemographic.R")
 
 if (tipo=="censos"){
   
