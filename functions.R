@@ -261,6 +261,88 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
   return(data_aux)
 }
 
+
+# Median function 
+scl_median <- function(.data, .nombre, .median_var, .condicion, .group_vars) {
+  #scl_mean(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+  # Convert conditions to expressions
+  .condicion <- rlang::parse_expr(.condicion)
+  .median_var <- rlang::sym(.median_var)  # convert to symbol
+  #.group_vars <- .group_vars
+
+  
+  if (!is.null(.group_vars)) {
+    data_aux <- .data %>%
+      dplyr::filter(!!.condicion) %>%
+      dplyr::group_by_at(.group_vars) %>%
+      dplyr::summarise(
+        value = weightedMedian(!!.median_var, w = factor_ch, na.rm = TRUE),
+        indicator = .nombre,
+        se = NA_real_,
+        cv = NA_real_,
+        level = NA_real_,
+        sample = NA_real_
+      ) %>% 
+      dplyr::ungroup()
+  } else {
+    data_aux <- .data %>%
+      dplyr::filter(!!.condicion) %>%
+      dplyr::summarise(
+        value = weightedMedian(!!.median_var, w = factor_ch, na.rm = TRUE),
+        indicator = .nombre,
+        se = NA_real_,
+        cv = NA_real_,
+        level = NA_real_,
+        sample = NA_real_
+      )
+  }
+  
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('age_lmk' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_lmk)
+  }
+  
+  if('age_scl' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_scl)
+  }
+  
+  if('age_15_64_lmk' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_15_64_lmk)
+  }
+  
+  if('age_15_29_lmk' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_15_29_lmk)
+  }
+  
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('quintile_ci' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci)
+  } else if('quintile_ci_urban' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci_urban)
+  } else if('quintile_ci_rural' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci_rural)
+  } else if('quintile_ch' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch)
+  }else if('quintile_ch_urban' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch_urban)
+  }else if('quintile_ch_rural' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch_rural)
+  }
+  
+  # Add disaggregation columns if not already present
+  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
+    if (!(disaggregation_col %in% colnames(data_aux))) {
+      data_aux[[disaggregation_col]] <- "Total"
+    }
+  }
+  
+  # Rearrange columns
+  data_aux <- data_aux %>% 
+    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,
+                  value, level, se, cv, sample)
+  
+  return(data_aux)
+}
 # Ratio decile 
 
 scl_ratio_decil <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
@@ -360,7 +442,7 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
 }
 
 calculate_indicators <- function(i, data, indicator_definitions) {
-  
+  data <- data_filt
   # Extract each component of the current indicator definition
   ind <- indicator_definitions[i, ]
   aggregation_function <- ind$aggregation_function
@@ -371,7 +453,7 @@ calculate_indicators <- function(i, data, indicator_definitions) {
   
   # Initialize a list to store results
   res_list <- list()
-  
+  print(ind)
   # Generate all possible combinations of disaggregations
   disaggregation_combinations <- expand.grid(lapply(disaggregation, function(x) {
     if (x %in% c("year", "isoalpha3")) {
@@ -394,29 +476,36 @@ calculate_indicators <- function(i, data, indicator_definitions) {
     # If the condition for exclusion is not met, calculate the indicator
     if(!conditionDesaggregation) {
       if(aggregation_function == "pct") {
+        message(paste("pctv2: ", ind$indicator_name))
         res <- scl_pct(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
         res_list[[j]] <- res
       } else if(aggregation_function == "pctv2") {
+        message(paste("pctv2: ", ind$indicator_name))
         res <- scl_pctv2(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
         res_list[[j]] <- res         
       } else if(aggregation_function == "mean") {
+        message(paste("Mean: ", ind$indicator_name))
+        
         res <- scl_mean(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
         res_list[[j]] <- res
       }
-          else if(aggregation_function == "gini") {
-          res <- scl_gini(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
-          res_list[[j]] <- res
-    } else if(aggregation_function == "ratio_decil") {
-      res <- scl_ratio_decil(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
-      res_list[[j]] <- res
+      } else if(aggregation_function == "median") {
+        message(paste("median: ", ind$indicator_name))
+        res <- scl_median(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+        res_list[[j]] <- res
+      }
+      else if(aggregation_function == "gini") {
+        res <- scl_gini(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+        res_list[[j]] <- res
+      } else if(aggregation_function == "ratio_decil") {
+        res <- scl_ratio_decil(data, ind$indicator_name, numerator_condition, denominator_condition, current_disaggregation)
+        res_list[[j]] <- res
+      }
     }
-    }
-  }
+ 
   
   # Combine all disaggregated and total results
   res <- do.call(rbind, res_list)
   
   return(res)
 }
-
-

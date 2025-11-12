@@ -106,13 +106,14 @@ if (tipo=="censos"){
 cl <- makeCluster(num_cores)
 
 # Export data, indicator definitions and the necessary functions to the cluster
-clusterExport(cl, c("data_filt", "indicator_definitions", "scl_pct","scl_pctv2","scl_ratio_decil", "scl_mean","scl_gini","calculate_indicators", "evaluatingFilter", "drop_na"))
+clusterExport(cl, c("data_filt", "indicator_definitions", "scl_pct","scl_pctv2","scl_ratio_decil", "scl_mean","scl_gini","scl_median","calculate_indicators", "evaluatingFilter", "drop_na"))
 
 # Load necessary packages on each node of the cluster
 clusterEvalQ(cl, {
   library(magrittr)
   library(dplyr)
   library(rlang)
+  library(matrixStats)
 })
 
 is_haven_labelled <- function(x) {
@@ -126,7 +127,7 @@ message(paste("Calculating indicators ",pais,": ", anio))
 # Call the function in parallel
 results <- parLapply(cl, 1:nrow(indicator_definitions), calculate_indicators, data_filt, indicator_definitions)
 
-rm("data_filt")
+#rm("data_filt")
 gc()
 # Combine results
 data_total <- do.call(rbind, results)

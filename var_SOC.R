@@ -124,7 +124,8 @@ if (tipo == "encuestas") {
   data_filt <- left_join(data_filt, povertyLinesUpdated, by = c("pais_c" = "isoalpha3","anio_c" = "year"))
   
   data_filt <- data_filt %>%  
-    mutate(ylm_ci = as.double(ylm_ci),
+    mutate(npers=1,
+           ylm_ci = as.double(ylm_ci),
            ylnm_ci = as.double(ylnm_ci),
            ynlm_ci = as.double(ynlm_ci),
            miembros_ci = as.numeric(miembros_ci == 1),
@@ -140,6 +141,7 @@ if (tipo == "encuestas") {
       # Income per capita definition
       pc_ytot_ch = ifelse(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
       pc_ytot_ch = ifelse(pc_ytot_ch <= 0, NA, pc_ytot_ch),
+      pc_ytot_ch_ppp2021 = pc_ytot_ch/ppp_2021/cpi2021_imf,
       # Define area and sex based on zona_c and sexo_ci respectively,
       income_category = case_when(
         (pc_ytot_ch < lp31_2011_old ~ "extreme"),  # extreme poverty
