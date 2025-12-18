@@ -30,7 +30,12 @@ round <- planificacionSurveysPivot %>%
 survey <- planificacionSurveysPivot %>% 
           filter(`País`== pais & `year`== anio & availability ==1) %>% 
           pull(Encuesta)
-if (pais=="VEN" & anio==2021){
+
+restriction <- planificacionSurveysPivot %>% 
+  filter(`País`== pais & `year`== anio & availability ==1) %>% 
+  pull(access_right)
+
+if (restriction=="restricted"){
   
   base <- paste("//sapidbshares.file.core.windows.net//idbrestrictedshares//SCL_DATAFILES_RESTRICTED//harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")
 }
