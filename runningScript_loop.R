@@ -16,7 +16,7 @@ geoLevel <- "country"
 if (tipo=="encuestas"){
 
 available_years <- read.csv("Inputs/running_survey.csv") %>% 
-  filter(availability==1&person=="Jillie10") 
+  filter(availability==1&person=="New") 
 }
 
 if (tipo=="censos"){
