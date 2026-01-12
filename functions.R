@@ -84,8 +84,17 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
     data_aux <- data_aux %>% rename(quintile = quintile_ch_rural)
   }
   
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('income_category_2011_CPI' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_2011_CPI)
+  } else if('income_category_lp2017_CPI' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_lp2017_CPI)
+  } else if('income_category_lp2021IMF_ICP' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_lp2021IMF_ICP)
+  } 
+  
   # Add disaggregation columns if not already present
-  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
+  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area","poverty", "year", "isoalpha3", "geolev1")) {
     if (!(disaggregation_col %in% colnames(data_aux))) {
       data_aux[[disaggregation_col]] <- "Total"
     }
@@ -93,7 +102,7 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   
   # Rearrange columns
   data_aux <- data_aux %>% 
-    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,
+    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,poverty,
                   value, level, se, cv, sample)
   
   return(data_aux)
@@ -166,8 +175,17 @@ scl_pctv2 <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
     data_aux <- data_aux %>% rename(quintile = quintile_ch_rural)
   }
   
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('income_category_2011_CPI' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_2011_CPI)
+  } else if('income_category_lp2017_CPI' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_lp2017_CPI)
+  } else if('income_category_lp2021IMF_ICP' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_lp2021IMF_ICP)
+  } 
+  
   # Add disaggregation columns if not already present
-  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
+  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area","poverty", "year", "isoalpha3", "geolev1")) {
     if (!(disaggregation_col %in% colnames(data_aux))) {
       data_aux[[disaggregation_col]] <- "Total"
     }
@@ -175,7 +193,7 @@ scl_pctv2 <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   
   # Rearrange columns
   data_aux <- data_aux %>% 
-    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,
+    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,poverty,
                   value, level, se, cv, sample)
   
   return(data_aux)
@@ -246,8 +264,17 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
     data_aux <- data_aux %>% rename(quintile = quintile_ch_rural)
   }
   
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('income_category_2011_CPI' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_2011_CPI)
+  } else if('income_category_lp2017_CPI' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_lp2017_CPI)
+  } else if('income_category_lp2021IMF_ICP' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_lp2021IMF_ICP)
+  } 
+  
   # Add disaggregation columns if not already present
-  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
+  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area","poverty", "year", "isoalpha3", "geolev1")) {
     if (!(disaggregation_col %in% colnames(data_aux))) {
       data_aux[[disaggregation_col]] <- "Total"
     }
@@ -255,7 +282,7 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
   
   # Rearrange columns
   data_aux <- data_aux %>% 
-    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,
+    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,poverty,
                   value, level, se, cv, sample)
   
   return(data_aux)
@@ -291,7 +318,7 @@ scl_ratio_decil <- function(.data, .nombre, .condicion1, .condicion2, .group_var
   data_aux <- data.frame(value,indicator,level,se,cv,sample,isoalpha3,year)
   
   # Add disaggregation columns if not already present
-  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
+  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area","poverty", "year", "isoalpha3", "geolev1")) {
     if (!(disaggregation_col %in% colnames(data_aux))) {
       data_aux[[disaggregation_col]] <- "Total"
     }
@@ -299,7 +326,7 @@ scl_ratio_decil <- function(.data, .nombre, .condicion1, .condicion2, .group_var
   
   # Rearrange columns
   data_aux <- data_aux %>% 
-    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,
+    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,poverty,
                   value, level, se, cv, sample)
   
   return(data_aux)
@@ -345,7 +372,7 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   }
   
   # Add disaggregation columns if not already present
-  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area", "year", "isoalpha3", "geolev1")) {
+  for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area","poverty", "year", "isoalpha3", "geolev1")) {
     if (!(disaggregation_col %in% colnames(data_aux))) {
       data_aux[[disaggregation_col]] <- "Total"
     }
@@ -353,7 +380,7 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
   
   # Rearrange columns
   data_aux <- data_aux %>% 
-    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,
+    dplyr::select(isoalpha3, year, geolev1, indicator, sex, education_level, disability, quintile, ethnicity, migration, age, area,poverty,
                   value, level, se, cv, sample)
   
   return(data_aux)
