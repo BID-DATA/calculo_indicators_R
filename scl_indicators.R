@@ -60,11 +60,11 @@ if (tipo == "encuestas") {
 
 #### Compute intermediate variables  ####
 message(paste("Loading intermediate variables ",pais,": ", anio))
-  #source("var_LMK.R")
+  source("var_LMK.R")
 
-  #source("var_EDU.R")
+  source("var_EDU.R")
 
-  #source("var_GDI.R")
+  source("var_GDI.R")
 
 source("var_SOC.R")
 
@@ -106,7 +106,7 @@ if (tipo=="censos"){
 cl <- makeCluster(num_cores)
 
 # Export data, indicator definitions and the necessary functions to the cluster
-clusterExport(cl, c("data_filt", "indicator_definitions", "scl_pct","scl_pctv2","scl_ratio_decil", "scl_mean","scl_gini","scl_median","calculate_indicators", "evaluatingFilter", "drop_na"))
+clusterExport(cl, c("data_filt", "indicator_definitions", "scl_pct","scl_pctv2","scl_ratio_decil", "scl_mean","scl_gini","calculate_indicators", "evaluatingFilter", "drop_na"))
 
 # Load necessary packages on each node of the cluster
 clusterEvalQ(cl, {
@@ -139,7 +139,7 @@ stopCluster(cl)
 message(paste("Quality analysis ",pais,": ", anio))
 #disaggregations to remove NA
 #to do add this to the code so that they are removed
-vars_to_check <- c("sex", "disability", "ethnicity", "migration", "area", "quintile", "age", "value")
+vars_to_check <- c("sex", "disability", "ethnicity", "migration", "area", "quintile", "age","poverty", "value")
 
 data_total <- data_total %>%
   purrr::reduce(vars_to_check, function(data, var) {
@@ -184,7 +184,7 @@ data_total <- data_total %>% mutate(
 
 # reorder by column name
 data_total <- data_total[, c("iddate", "year", "idgeo","isoalpha3","fuente","indicator","area",
-                             "quintile","sex","education_level","age","ethnicity","disability","migration",
+                             "quintile","sex","education_level","age","ethnicity","disability","migration","poverty",
                              "value","level","se","cv","sample","quality_check")]
 
 # if census then add to the name of the results
