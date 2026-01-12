@@ -125,15 +125,21 @@ if (tipo == "encuestas") {
   
   data_filt <- data_filt %>%  
     mutate(npers=1,
+           jefa_ci = if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
            ylm_ci = as.double(ylm_ci),
            ylnm_ci = as.double(ylnm_ci),
            ynlm_ci = as.double(ynlm_ci),
            miembros_ci = as.numeric(miembros_ci == 1),
+           pob65_ci = as.numeric(edad_ci >= 65),
            ytot_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci, ynlm_ci, ynlnm_ci), na.rm = TRUE)),
-           ytot_ci = ifelse(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci)
+           ytot_ci = ifelse(is.na(ylm_ci) & is.na(ylnm_ci) & is.na(ynlm_ci) & is.na(ynlnm_ci),NA_real_, ytot_ci),
+           perceptor_ci = if_else(ytot_ci > 0, sum(miembros_ci, na.rm = TRUE), NA_real_),
+           dis_ch = as.numeric(sum(dis_ci) > 0)
            ) %>%
     group_by(idh_ch) %>%
-    mutate(ytot_ch = sum(ytot_ci*(miembros_ci == 1), na.rm = TRUE)
+    mutate(ytot_ch = sum(ytot_ci*(miembros_ci == 1), na.rm = TRUE),
+           jefa_ch = if_else(jefe_ci == 1, sum(jefa_ci, na.rm = TRUE), 0),
+           perceptor_ch = sum(as.numeric(ytot_ci > 0 & miembros_ci>0))
 ) %>%
     ungroup() %>% 
     # Mutate to compute additional variables
@@ -144,57 +150,68 @@ if (tipo == "encuestas") {
       pc_ytot_ch_ppp2021 = pc_ytot_ch/ppp_2021/cpi2021_imf,
       # Define area and sex based on zona_c and sexo_ci respectively,
       income_category = case_when(
-        (pc_ytot_ch < lp31_2011_old ~ "extreme"),  # extreme poverty
-        (pc_ytot_ch >= lp31_2011_old) & (pc_ytot_ch < lp5_2011_old) ~ "poverty",  # poverty
-        (pc_ytot_ch >= lp5_2011_old) & (pc_ytot_ch < lp31_2011_old*4) ~ "vulnerable",  # vulnerable
-        (pc_ytot_ch >= lp31_2011_old*4) & (pc_ytot_ch < lp31_2011_old*20) ~ "middle",  # middle class
-        (pc_ytot_ch >= lp31_2011_old*20) ~ "rich", 
+        (pc_ytot_ch < lp31_2011_old ~ "extreme_2011_old"),  # extreme poverty
+        (pc_ytot_ch >= lp31_2011_old) & (pc_ytot_ch < lp5_2011_old) ~ "poverty_2011_old",  # poverty
+        (pc_ytot_ch >= lp5_2011_old) & (pc_ytot_ch < lp31_2011_old*4) ~ "vulnerable_2011_old",  # vulnerable
+        (pc_ytot_ch >= lp31_2011_old*4) & (pc_ytot_ch < lp31_2011_old*20) ~ "middle_2011_old",  # middle class
+        (pc_ytot_ch >= lp31_2011_old*20) ~ "rich_2011_old", 
         TRUE ~ NA_character_),  # rich,
       income_category_2011_CPI = case_when(
-        (pc_ytot_ch < lp31_2011.y ~ "extreme"),  # extreme poverty
-        (pc_ytot_ch >= lp31_2011.y) & (pc_ytot_ch < lp5_2011.y) ~ "poverty",  # poverty
-        (pc_ytot_ch >= lp5_2011.y) & (pc_ytot_ch < lp31_2011.y*4) ~ "vulnerable",  # vulnerable
-        (pc_ytot_ch >= lp31_2011.y*4) & (pc_ytot_ch < lp31_2011.y*20) ~ "middle",  # middle class
-        (pc_ytot_ch >= lp31_2011.y*20) ~ "rich", 
+        (pc_ytot_ch < lp31_2011.y ~ "extreme_2011_CPI"),  # extreme poverty
+        (pc_ytot_ch >= lp31_2011.y) & (pc_ytot_ch < lp5_2011.y) ~ "poverty_2011_CPI",  # poverty
+        (pc_ytot_ch >= lp5_2011.y) & (pc_ytot_ch < lp31_2011.y*4) ~ "vulnerable_2011_CPI",  # vulnerable
+        (pc_ytot_ch >= lp31_2011.y*4) & (pc_ytot_ch < lp31_2011.y*20) ~ "middle_2011_CPI",  # middle class
+        (pc_ytot_ch >= lp31_2011.y*20) ~ "rich_2011_CPI", 
         TRUE ~ NA_character_),  # rich,
       income_category_lp2017 = case_when(
-        (pc_ytot_ch < lp365_2017_old ~ "extreme"),  # extreme poverty
-        (pc_ytot_ch >= lp365_2017_old) & (pc_ytot_ch < lp685_2017_old) ~ "poverty",  # poverty
-        (pc_ytot_ch >= lp685_2017_old) & (pc_ytot_ch < lp14_2017_old) ~ "vulnerable",  # vulnerable
-        (pc_ytot_ch >= lp14_2017_old) & (pc_ytot_ch < lp685_2017_old) ~ "middle",  # middle class
-        (pc_ytot_ch >= lp685_2017_old) ~ "rich", 
+        (pc_ytot_ch < lp365_2017_old ~ "extreme_2017_old"),  # extreme poverty
+        (pc_ytot_ch >= lp365_2017_old) & (pc_ytot_ch < lp685_2017_old) ~ "poverty_2017_old",  # poverty
+        (pc_ytot_ch >= lp685_2017_old) & (pc_ytot_ch < lp14_2017_old) ~ "vulnerable_2017_old",  # vulnerable
+        (pc_ytot_ch >= lp14_2017_old) & (pc_ytot_ch < lp685_2017_old) ~ "middle_2017_old",  # middle class
+        (pc_ytot_ch >= lp685_2017_old) ~ "rich_2017_old", 
         TRUE ~ NA_character_),  # rich,
       income_category_lp2017_CPI = case_when(
-        (pc_ytot_ch < lp365_2017.y ~ "extreme"),  # extreme poverty
-        (pc_ytot_ch >= lp365_2017.y) & (pc_ytot_ch < lp685_2017.y) ~ "poverty",  # poverty
-        (pc_ytot_ch >= lp685_2017.y) & (pc_ytot_ch < lp14_2017.y) ~ "vulnerable",  # vulnerable
-        (pc_ytot_ch >= lp14_2017.y) & (pc_ytot_ch < lp81_2017.y) ~ "middle",  # middle class
-        (pc_ytot_ch >= lp81_2017.y) ~ "rich", 
+        (pc_ytot_ch < lp365_2017.y ~ "extreme_lp2017_CPI"),  # extreme poverty
+        (pc_ytot_ch >= lp365_2017.y) & (pc_ytot_ch < lp685_2017.y) ~ "poverty_lp2017_CPI",  # poverty
+        (pc_ytot_ch >= lp685_2017.y) & (pc_ytot_ch < lp14_2017.y) ~ "vulnerable_lp2017_CPI",  # vulnerable
+        (pc_ytot_ch >= lp14_2017.y) & (pc_ytot_ch < lp81_2017.y) ~ "middle_lp2017_CPI",  # middle class
+        (pc_ytot_ch >= lp81_2017.y) ~ "rich_lp2017_CPI", 
         TRUE ~ NA_character_),  # rich,      
       income_category_lp2021Jillie = case_when(
-        (pc_ytot_ch < lp420_2021_old ~ "extreme"),  # extreme poverty
-        (pc_ytot_ch >= lp420_2021_old) & (pc_ytot_ch < lp830_2021_old) ~ "poverty",  # poverty
-        (pc_ytot_ch >= lp830_2021_old) & (pc_ytot_ch < lp420_2021_old*4) ~ "vulnerable",  # vulnerable
-        (pc_ytot_ch >= lp420_2021_old*4) & (pc_ytot_ch < lp420_2021_old*20) ~ "middle",  # middle class
-        (pc_ytot_ch >= lp420_2021_old*20) ~ "rich", 
+        (pc_ytot_ch < lp420_2021_old ~ "extreme_2021_old"),  # extreme poverty
+        (pc_ytot_ch >= lp420_2021_old) & (pc_ytot_ch < lp830_2021_old) ~ "poverty_2021_old",  # poverty
+        (pc_ytot_ch >= lp830_2021_old) & (pc_ytot_ch < lp420_2021_old*4) ~ "vulnerable_2021_old",  # vulnerable
+        (pc_ytot_ch >= lp420_2021_old*4) & (pc_ytot_ch < lp420_2021_old*20) ~ "middle_2021_old",  # middle class
+        (pc_ytot_ch >= lp420_2021_old*20) ~ "rich_2021_old", 
         TRUE ~ NA_character_), # rich,
       income_category_lp2021IMF_ICP = case_when(
-        (pc_ytot_ch < lp420_2021 ~ "extreme"),  # extreme poverty
-        (pc_ytot_ch >= lp420_2021) & (pc_ytot_ch < lp830_2021) ~ "poverty",  # poverty
-        (pc_ytot_ch >= lp830_2021) & (pc_ytot_ch < lp420_2021*4) ~ "vulnerable",  # vulnerable
-        (pc_ytot_ch >= lp420_2021*4) & (pc_ytot_ch < lp420_2021*20) ~ "middle",  # middle class
-        (pc_ytot_ch >= lp420_2021*20) ~ "rich", 
+        (pc_ytot_ch < lp420_2021 ~ "extreme_lp2021_CPI"),  # extreme poverty
+        (pc_ytot_ch >= lp420_2021) & (pc_ytot_ch < lp830_2021) ~ "poverty_lp2021_CPI",  # poverty
+        (pc_ytot_ch >= lp830_2021) & (pc_ytot_ch < lp420_2021*4) ~ "vulnerable_lp2021_CPI",  # vulnerable
+        (pc_ytot_ch >= lp420_2021*4) & (pc_ytot_ch < lp420_2021*20) ~ "middle_lp2021_CPI",  # middle class
+        (pc_ytot_ch >= lp420_2021*20) ~ "rich_lp2021_CPI", 
         TRUE ~ NA_character_),
-      povertyGapExtreme_lp2017IMF_ICP = case_when(
-        (income_category_lp2017_CPI =="extreme" ~ ((lp365_2017.y - pc_ytot_ch)/lp365_2017.y))),
-      povertyGapNoExtreme_lp20171IMF_ICP = case_when(
-        (income_category_lp2017_CPI =="poverty"|income_category_lp2017_CPI =="extreme") ~ ((lp685_2017.y - pc_ytot_ch)/lp685_2017.y)),
-      povertyGapExtreme_lp2021IMF_ICP = case_when(
-        (income_category_lp2017_CPI =="extreme" ~ ((lp420_2021 - pc_ytot_ch)/lp420_2021))),
-        povertyGapNoExtreme_lp2021IMF_ICP = case_when(
-          (income_category_lp2021IMF_ICP =="poverty"|income_category_lp2021IMF_ICP =="extreme") ~ ((lp830_2021 - pc_ytot_ch)/lp830_2021)
+      area = case_when(
+        zona_c == 1 ~ "urban", 
+        zona_c == 0 ~ "rural", 
+        TRUE ~ NA_character_
+      ),
+      sex = case_when(
+        sexo_ci == 2 ~ "women",
+        sexo_ci == 1 ~ "men", 
+        TRUE ~ NA_character_
+      ),
+      disability_ch =  dplyr::case_when(dis_ch == 1 ~ "household_with_disability",
+                                        dis_ch == 0 ~"household_with_no_disability",  
+                                        TRUE ~ NA_character_),      
+      # remesas
+      #indexrem = ifelse(jefe_ci == 1 & !is.na(remesas_ch) & remesas_ch > 0, 1, NA),
+      #ylmprixh = ylmpri_ci / (horaspri_ci * 4.34),
+      #vivienda
+      depen_ch = nmiembros_ch / perceptor_ch,
+      hacinamiento_ch = nmiembros_ch / cuartos_ch
       )
-    )
+    
   #weighted_table <- wtd.table(x = data_filt$income_category_lp2021, weights = data_filt$factor_ch)
   #print(weighted_table)
   # Calculate percentages
