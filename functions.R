@@ -215,7 +215,7 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
         indicator = .nombre,
         se = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE) / sum(factor_ci)),
         cv = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE)) / value * 100,
-        level = sum(!!.condicion, na.rm=TRUE),
+        level = sum(factor_ci, na.rm=TRUE),
         sample = sum(!!.mean_var, na.rm=TRUE)
       ) %>% 
       dplyr::ungroup()
@@ -227,7 +227,7 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
         indicator = .nombre,
         se = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE) / sum(factor_ci)),
         cv = sqrt(stats::var(!!.mean_var * factor_ci, na.rm = TRUE)) / value * 100,
-        level = sum(!!.condicion, na.rm=TRUE),
+        level = sum(factor_ci, na.rm=TRUE),
         sample = sum(!!.mean_var, na.rm=TRUE)
       )
   }
