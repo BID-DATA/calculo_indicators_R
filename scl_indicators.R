@@ -68,7 +68,7 @@ message(paste("Loading intermediate variables ",pais,": ", anio))
 
 source("var_SOC.R")
 
-
+  
 
 # Remove data we do not need and free memory
   rm("variables_encuestas", "varlist_censos", "variables_censos", "required_vars","missing_vars")
@@ -151,8 +151,8 @@ data_total <- data_total %>%
 
 # showing NA as NA instead of zeros
 
- data_total <- data_total %>%
-   filter(!(is.na(cv) & value==0 & level==0 & se==0))
+# data_total <- data_total %>%
+#   filter(!(is.na(cv) & value==0 & level==0 & se==0))
 
 
  data_total <- data_total %>% mutate(# adding iddate
@@ -170,17 +170,17 @@ data_total <- data_total %>%
 indicator_definitionsv2 <- indicator_definitions  %>% select(indicator_name,aggregation_function)
 data_total <- left_join(data_total, indicator_definitionsv2 ,join_by("indicator"=="indicator_name"))
 
-data_total <- data_total %>% mutate(
-  muestra_baja = ifelse(!is.na(sample),as.numeric(sample<30),NA_real_),
-  se = se * 100,
-  se_fuera05 = ifelse(!is.na(se),as.numeric(aggregation_function=="pct"&(value<=0.5 & se>(value^(2/3))/9)),NA_real_),
-  se_fuera = ifelse(!is.na(se),as.numeric(aggregation_function=="pct"&value>0.5 & (se>((1-value)^(2/3))/9)),NA_real_),
-  quality_check = NA_real_,
-  quality_check = case_when((muestra_baja==0 & (se_fuera05==0|se_fuera==0))~1,
-                            (muestra_baja==0 & (se_fuera05==1|se_fuera==1))~2,
-                            muestra_baja==1~3,
-                            TRUE~NA_real_)
-)
+#data_total <- data_total %>% mutate(
+#  muestra_baja = ifelse(!is.na(sample),as.numeric(sample<30),NA_real_),
+#  se = se * 100,
+#  se_fuera05 = ifelse(!is.na(se),as.numeric(aggregation_function=="pct"&(value<=0.5 & se>(value^(2/3))/9)),NA_real_),
+#  se_fuera = ifelse(!is.na(se),as.numeric(aggregation_function=="pct"&value>0.5 & (se>((1-value)^(2/3))/9)),NA_real_),
+#  quality_check = NA_real_,
+#  quality_check = case_when((muestra_baja==0 & (se_fuera05==0|se_fuera==0))~1,
+#                            (muestra_baja==0 & (se_fuera05==1|se_fuera==1))~2,
+#                            muestra_baja==1~3,
+#                            TRUE~NA_real_)
+#)
 
 # reorder by column name
 data_total <- data_total[, c("iddate", "year", "idgeo","isoalpha3","fuente","indicator","area",
