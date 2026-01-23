@@ -60,7 +60,14 @@ for (i in 1:nrow(unique_combinations)) {
     
   }, error = function(e) {
     skip_to_next <<- TRUE
-    print(paste(pais,anio,"Error al correr base"))
+    message(paste("ERROR in:", pais, anio))
+    message("Error message: ", conditionMessage(e))
+    message("Error call: ", deparse(conditionCall(e)))
+    message("Full traceback:")
+    traceback()
+  }, warning = function(w) {
+    message(paste("WARNING in:", pais, anio, "-", conditionMessage(w)))
+    invokeRestart("muffleWarning")
   })
   
   if (skip_to_next) {
@@ -68,4 +75,3 @@ for (i in 1:nrow(unique_combinations)) {
   }
   
 }
-

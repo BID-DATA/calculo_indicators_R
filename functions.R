@@ -68,6 +68,10 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
     data_aux <- data_aux %>% rename(age = age_15_64_lmk)
   } else if('age_15_29_lmk' %in% .group_vars){
     data_aux <- data_aux %>% rename(age = age_15_29_lmk)
+  } else if('edad_escolar' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = edad_escolar)
+  } else if('edad_no_escolar' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = edad_no_escolar)
   }
   # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
   if('quintile_ci' %in% .group_vars){
@@ -145,6 +149,10 @@ scl_pctv2 <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
     data_aux <- data_aux %>% rename(age = age_lmk)
   } else if('age_scl' %in% .group_vars){
     data_aux <- data_aux %>% rename(age = age_scl)
+  } else if('edad_escolar' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = edad_escolar)
+  } else if('edad_no_escolar' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = edad_no_escolar)
   } else if('age_15_64_lmk' %in% .group_vars){
     data_aux <- data_aux %>% rename(age = age_15_64_lmk)
   } else if('age_15_29_lmk' %in% .group_vars){
@@ -221,6 +229,14 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
   
   if('age_scl' %in% .group_vars){
     data_aux <- data_aux %>% rename(age = age_scl)
+  }
+  
+  if('edad_escolar' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = edad_escolar)
+  }
+  
+  if('edad_no_escolar' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = edad_no_escolar)
   }
   
   if('age_15_64_lmk' %in% .group_vars){

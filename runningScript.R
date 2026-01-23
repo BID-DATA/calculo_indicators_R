@@ -10,8 +10,8 @@ library(parallel)
 library(multidplyr)
 library(reldist)
 
-pais<-"DOM"
-anio<-"2023"
+pais<-"MEX"
+anio<-"2016"
 
 # select between "censos"/"encuestas"
 tipo<-"encuestas"
@@ -35,6 +35,5 @@ if (tipo=="censos"){
   write.csv(data_total, paste("Outputs/indicadores_censos_hogares_", pais,"_",anio,".csv",sep = ""), row.names=FALSE)
   rm("data_scl","data_total","data_aux")
   gc()
-
+  
 }
-
