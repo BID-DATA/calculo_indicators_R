@@ -145,6 +145,8 @@ if (tipo == "encuestas") {
     # Mutate to compute additional variables
     mutate(
       # Income per capita definition
+      ylm_ci_ppp = ylm_ci/ppp_2021/cpi_2021,
+      remesas_ci_ppp = remesas_ci/ppp_2021/cpi_2021,      
       pc_ytot_ch = ifelse(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
       pc_ytot_ch = ifelse(pc_ytot_ch <= 0, NA, pc_ytot_ch),
       pc_ytot_ch_ppp2021 = pc_ytot_ch/ppp_2021/cpi2021_imf,
