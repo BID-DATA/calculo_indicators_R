@@ -164,6 +164,7 @@ if (tipo == "encuestas") {
       liv_wage   = ifelse(is.na(hsal_ci),NA_real_,hsal_ci>1.95),
       #1.6.2 Ingreso laboral monetario
       #ylm_ci = ifelse(is.na(ylmpri_ci),NA_real_,ylm_ci),
+
       ylab_ci = ifelse(pea==1 & emp_ci==1,ylm_ci,NA_real_),
       ylab_ppp=ylab_ci/ppp_2011/ratio_cpi2011,
       ylab_ppp_2017=ylab_ci/ppp_2017/ratio_cpi2017,
