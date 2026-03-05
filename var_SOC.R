@@ -119,10 +119,7 @@ start_time <- Sys.time()
 if (tipo == "encuestas") {
   
   # creating a vector with initial column names
-  povertyLinesUpdated <- read_dta("Inputs/masterdata.dta")  
-  
-  data_filt <- left_join(data_filt, povertyLinesUpdated, by = c("pais_c" = "isoalpha3","anio_c" = "year"))
-  
+
   data_filt <- data_filt %>%  
     mutate(npers=1,
            jefa_ci = if_else(jefe_ci == 1, as.numeric(sexo_ci == 2), NA_real_),
@@ -145,6 +142,8 @@ if (tipo == "encuestas") {
     # Mutate to compute additional variables
     mutate(
       # Income per capita definition
+      cantidad_privaciones = rowSums(cbind((piso_ch==0) + (pared_ch==0) + (techo_ch==0)), na.rm = TRUE),
+      #cantidad_privaciones = (piso_ch==0) + (pared_ch==0) + (techo_ch==0),
       ylm_ci_ppp = ylm_ci/ppp_2021/cpi_2021,
       remesas_ci_ppp = remesas_ci/ppp_2021/cpi_2021,      
       pc_ytot_ch = ifelse(nmiembros_ch > 0, ytot_ch / nmiembros_ch, NA),
