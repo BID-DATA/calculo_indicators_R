@@ -25,7 +25,7 @@ functionRoundAndSurvey <- function(pais, tipo, anio) {
     restriction <- planificacionSurveys %>% 
       filter(`Pais`== pais & `year`== anio & availability ==1) %>% 
       pull(access_right)
-    print(restriction)
+    #print(restriction)
     if (isTRUE(restriction == "restricted")) {
       
       base <- paste("//sapidbshares.file.core.windows.net//idbrestrictedshares//SCL_DATAFILES_RESTRICTED//harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")
@@ -38,7 +38,7 @@ functionRoundAndSurvey <- function(pais, tipo, anio) {
                         sprintf("%s_%s%s_BID.dta", pais, anio, round),
                         fsep = "/")
       
-      print(base)
+      #print(base)
     }
     #\\sapidbshares.file.core.windows.net\idbshares\SURVEYS
     # return database address
