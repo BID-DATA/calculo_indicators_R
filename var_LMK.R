@@ -122,7 +122,14 @@ if (tipo == "censos") {
 if (tipo == "encuestas") {
   
   # creating a vector with initial column names
-
+ # povertyLinesUpdated <- read_dta("Inputs/masterdata.dta")  
+  
+#  data_filt <- left_join(data_filt, povertyLinesUpdated, by = c("pais_c" = "isoalpha3","anio_c" = "year"))
+  povertyLinesUpdated <- read_dta("Inputs/masterdata.dta")  
+  
+  data_filt <- left_join(data_filt, povertyLinesUpdated, by = c("pais_c" = "isoalpha3","anio_c" = "year"))
+  
+  
   data_filt <- data_filt %>% 
     mutate(#1.1 Poblacion Total, en Edad de Trabajar - PET y economicamente activa PEA:
       npers = ifelse(TRUE,1,0),
@@ -157,30 +164,34 @@ if (tipo == "encuestas") {
       #1.5 PPP
       #1.6 Ingresos
       #1.6.1 Población ocupada por encima del umbral del salario horario suficiente (1.95 US ppp) 
-      ylmpri_ppp = ylmpri_ci/ppp_2011/ratio_cpi2011,
-      ylmpri_ppp_2017 = ylmpri_ci/ppp_2017/ratio_cpi2017,
+      ylmpri_ppp = ylmpri_ci/ppp_2021/cpi_2021,
+      #ylmpri_ppp_2017 = ylmpri_ci/ppp_2017/ratio_cpi2017,
       hsal_ci= ifelse(condocup_ci==1, ylmpri_ppp/(horaspri_ci*4.3), NA_real_), 
-      hsal_ci_2017= ifelse(condocup_ci==1, ylmpri_ppp_2017/(horaspri_ci*4.3), NA_real_), 
-      liv_wage   = ifelse(is.na(hsal_ci),NA_real_,hsal_ci>1.95),
+      #hsal_ci_2017= ifelse(condocup_ci==1, ylmpri_ppp_2017/(horaspri_ci*4.3), NA_real_), 
+      #liv_wage   = ifelse(is.na(hsal_ci),NA_real_,hsal_ci>1.95),
       #1.6.2 Ingreso laboral monetario
       #ylm_ci = ifelse(is.na(ylmpri_ci),NA_real_,ylm_ci),
 
       ylab_ci = ifelse(pea==1 & emp_ci==1,ylm_ci,NA_real_),
-      ylab_ppp=ylab_ci/ppp_2011/ratio_cpi2011,
-      ylab_ppp_2017=ylab_ci/ppp_2017/ratio_cpi2017,
+      #ylab_ppp=ylab_ci/ppp_2011/ratio_cpi2011,
+      #ylab_ppp_2017=ylab_ci/ppp_2017/ratio_cpi2017,
+      ylab_ppp_2021=ylab_ci/ppp_2021/cpi_2021,
       #1.6.3 Ingreso horario en la actividad principal USD
       hwage_ci = ifelse(condocup_ci==1,ylmpri_ci/(horaspri_ci*4.3),NA_real_),
-      hwage_ppp=hwage_ci/ppp_2011/ratio_cpi2011,
-      hwage_ppp_2017=hwage_ci/ppp_2017/ratio_cpi2017,
+      #hwage_ppp=hwage_ci/ppp_2011/ratio_cpi2011,
+      #hwage_ppp_2017=hwage_ci/ppp_2017/ratio_cpi2017,
+      hwage_ppp_2021=hwage_ci/ppp_2021/cpi_2021,
+      
       #1.6.4 Ingreso por pensión contributiva USD
-      ypen_ppp=ypen_ci/ppp_2011/ratio_cpi2011,
-      ypen_ppp_2017=ypen_ci/ppp_2017/ratio_cpi2017,
+      #ypen_ppp=ypen_ci/ppp_2011/ratio_cpi2011,
+      #ypen_ppp_2017=ypen_ci/ppp_2017/ratio_cpi2017,
+      ypen_ppp_2021=ypen_ci/ppp_2021/cpi_2021,
       #1.6.5 Salario mínimo mensual y horario - USD PPP
-      salmm_ppp=salmm_ci/ppp_2011/ratio_cpi2011,
-      salmm_ppp_2017=salmm_ci/ppp_2017/ratio_cpi2017,
+      #salmm_ppp=salmm_ci/ppp_2011/ratio_cpi2011,
+      #salmm_ppp_2017=salmm_ci/ppp_2017/ratio_cpi2017,
       hsmin_ci=salmm_ci/(5*8*4.3),
-      hsmin_ppp=salmm_ppp/(5*8*4.3),
-      hsmin_ppp_2017=salmm_ppp_2017/(5*8*4.3),
+      #hsmin_ppp=salmm_ppp/(5*8*4.3),
+      #hsmin_ppp_2017=salmm_ppp_2017/(5*8*4.3),
       #1.6.6 Salario por actividad principal y total menor al mínimo legal (por mes)
       yltotal_ci = pmax(0, rowSums(cbind(ylm_ci, ylnm_ci), na.rm = TRUE)),
       menorwmin = ifelse((condocup_ci==1 & !is.na(salmm_ci) & !is.na(ylmpri_ci)),(ylmpri_ci<=salmm_ci),NA_real_),
