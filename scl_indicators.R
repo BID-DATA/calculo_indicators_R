@@ -20,6 +20,7 @@
     # Get the names of the variables that need to be in the data
     required_vars <- unique(varlist_censos$Variable)
     # Read data
+    #data_filt <- read_dta(base,col_select=any_of(required_vars))
     data_filt <- read_dta(base,col_select=any_of(required_vars))
     # Remove data we do not need and free memory
     # Check which of the required variables are not in the data
