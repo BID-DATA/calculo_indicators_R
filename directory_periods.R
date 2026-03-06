@@ -8,39 +8,34 @@ functionRoundAndSurvey <- function(pais, tipo, anio) {
 if (tipo == "encuestas") {
 
 # 1. reading dataset with surveys, round and year
-planificacionSurveys <- readxl::read_xlsx("Inputs/Planeación - Armonización de Encuestas de Hogares.xlsx", sheet = "HH surveys")
-
-# 2. Pivoting to transform excel
-# 2.1 Getting list of years availables
-yearsAvailable <- planificacionSurveys %>% 
-                  dplyr::select(where(is.numeric)) %>% 
-                  select(-"Total") %>% 
-                  colnames()
-# choosing survey depending on year and country and round depending on that information
-planificacionSurveysPivot <- planificacionSurveys %>%
-                    pivot_longer(cols=yearsAvailable,
-                                 names_to='year',
-                                 values_to='availability')
-
+  planificacionSurveys <- read.csv("Inputs/running_survey.csv") 
 # choosing round depending on that information
-round <- planificacionSurveysPivot %>% 
-         filter(`País`== pais & `year`== anio & availability ==1) %>% 
-         pull(`Ronda armonizada BID`)
+round <- planificacionSurveys %>% 
+         filter(`Pais`== pais & `year`== anio & availability ==1) %>% 
+         pull(`Ronda.armonizada.BID`)
 
-survey <- planificacionSurveysPivot %>% 
-          filter(`País`== pais & `year`== anio & availability ==1) %>% 
+survey <- planificacionSurveys %>% 
+          filter(`Pais`== pais & `year`== anio & availability ==1) %>% 
           pull(Encuesta)
 
-restriction <- planificacionSurveysPivot %>% 
-  filter(`País`== pais & `year`== anio & availability ==1) %>% 
+restriction <- planificacionSurveys %>% 
+  filter(`Pais`== pais & `year`== anio & availability ==1) %>% 
   pull(access_right)
 
 if (isTRUE(restriction == "restricted")) {
   
-  base <- paste("//sapidbshares.file.core.windows.net//idbrestrictedshares//SCL_DATAFILES_RESTRICTED//harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")
+  #base <- paste("//sapidbshares.file.core.windows.net//idbrestrictedshares//SCL_DATAFILES_RESTRICTED//harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")
+  base_dir <- "//sapidbshares.file.core.windows.net/idbrestrictedshares/SCL_DATAFILES_RESTRICTED/harmonized/"
+  base <- file.path(base_dir, pais, survey, "data_arm",
+                    sprintf("%s_%s%s_BID.dta", pais, anio, round),
+                    fsep = "/")  
+  #\\sapidbshares.file.core.windows.net\idbrestrictedshares\SCL_DATAFILES_RESTRICTED
 }
 else {
-  base <- paste("Z://harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")  
+  base_dir <- "//sapidbshares.file.core.windows.net/idbshares/SURVEYS/harmonized"
+  base <- file.path(base_dir, pais, survey, "data_arm",
+                    sprintf("%s_%s%s_BID.dta", pais, anio, round),
+                    fsep = "/")  
 }
 # return database address
 return(base)
