@@ -16,7 +16,7 @@ geoLevel <- "country"
 if (tipo=="encuestas"){
 
 available_years <- read.csv("Inputs/running_survey.csv") %>% 
-  filter(availability==1&person=="New") 
+  filter(availability==1&person=="Isla") 
 }
 
 if (tipo=="censos"){
@@ -60,7 +60,11 @@ for (i in 1:nrow(unique_combinations)) {
     
   }, error = function(e) {
     skip_to_next <<- TRUE
-    print(paste(pais,anio,"Error al correr base"))
+    message(paste("ERROR in:", pais, anio))
+    message("Error message: ", conditionMessage(e))
+    message("Error call: ", deparse(conditionCall(e)))
+    message("Full traceback:")
+    traceback()
   })
   
   if (skip_to_next) {
@@ -68,4 +72,3 @@ for (i in 1:nrow(unique_combinations)) {
   }
   
 }
-

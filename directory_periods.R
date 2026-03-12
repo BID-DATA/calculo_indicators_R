@@ -8,31 +8,22 @@ functionRoundAndSurvey <- function(pais, tipo, anio) {
 if (tipo == "encuestas") {
 
 # 1. reading dataset with surveys, round and year
-planificacionSurveys <- readxl::read_xlsx("Inputs/Planeación - Armonización de Encuestas de Hogares.xlsx", sheet = "HH surveys")
+planificacionSurveys <- read.csv("Inputs/running_survey.csv")
 
 # 2. Pivoting to transform excel
 # 2.1 Getting list of years availables
-yearsAvailable <- planificacionSurveys %>% 
-                  dplyr::select(where(is.numeric)) %>% 
-                  select(-"Total") %>% 
-                  colnames()
-# choosing survey depending on year and country and round depending on that information
-planificacionSurveysPivot <- planificacionSurveys %>%
-                    pivot_longer(cols=yearsAvailable,
-                                 names_to='year',
-                                 values_to='availability')
 
 # choosing round depending on that information
-round <- planificacionSurveysPivot %>% 
-         filter(`País`== pais & `year`== anio & availability ==1) %>% 
-         pull(`Ronda armonizada BID`)
+round <- planificacionSurveys %>% 
+         filter(`Pais`== pais & `year`== anio & availability ==1) %>% 
+         pull(`Ronda.armonizada.BID`)
 
-survey <- planificacionSurveysPivot %>% 
-          filter(`País`== pais & `year`== anio & availability ==1) %>% 
+survey <- planificacionSurveys %>% 
+          filter(`Pais`== pais & `year`== anio & availability ==1) %>% 
           pull(Encuesta)
 
-restriction <- planificacionSurveysPivot %>% 
-  filter(`País`== pais & `year`== anio & availability ==1) %>% 
+restriction <- planificacionSurveys %>% 
+  filter(`Pais`== pais & `year`== anio & availability ==1) %>% 
   pull(access_right)
 
 if (isTRUE(restriction == "restricted")) {
