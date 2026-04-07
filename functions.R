@@ -371,6 +371,40 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
       )
   }
   
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('age_lmk' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_lmk)
+  } else if('age_scl' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_scl)
+  } else if('age_15_64_lmk' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_15_64_lmk)
+  } else if('age_15_29_lmk' %in% .group_vars){
+    data_aux <- data_aux %>% rename(age = age_15_29_lmk)
+  }
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('quintile_ci' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci)
+  } else if('quintile_ci_urban' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci_urban)
+  } else if('quintile_ci_rural' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ci_rural)
+  } else if('quintile_ch' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch)
+  }else if('quintile_ch_urban' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch_urban)
+  }else if('quintile_ch_rural' %in% .group_vars){
+    data_aux <- data_aux %>% rename(quintile = quintile_ch_rural)
+  }
+  
+  # Renaming 'age_lmk' or 'age_scl' to 'age' if they are present in .group_vars
+  if('income_category_2011_CPI' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_2011_CPI)
+  } else if('income_category_lp2017_CPI' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_lp2017_CPI)
+  } else if('income_category_lp2021IMF_ICP' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = income_category_lp2021IMF_ICP)
+  } 
+  
   # Add disaggregation columns if not already present
   for (disaggregation_col in c("sex", "education_level", "disability", "quintile", "ethnicity", "migration", "age", "area","poverty", "year", "isoalpha3", "geolev1")) {
     if (!(disaggregation_col %in% colnames(data_aux))) {
