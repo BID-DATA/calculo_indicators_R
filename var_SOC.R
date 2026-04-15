@@ -149,7 +149,7 @@ if (tipo == "encuestas") {
     # Mutate to compute additional variables
     mutate(
       # Income per capita definition
-      cantidad_privaciones = rowSums(cbind((piso_ch==0) + (pared_ch==0) + (techo_ch==0)), na.rm = TRUE),
+      cantidad_privaciones = rowSums(cbind((aguamejorada_ch == 0) + (banomejorado_ch == 0) + (piso_ch ==0) + (pared_ch ==0) + (techo_ch ==0) + (luz_ch ==0)), na.rm = TRUE),
       #cantidad_privaciones = (piso_ch==0) + (pared_ch==0) + (techo_ch==0),
       ylm_ci_ppp = ylm_ci/ppp_2021/cpi_2021,
       remesas_ci_ppp = remesas_ci/ppp_2021/cpi_2021,      
@@ -198,7 +198,15 @@ if (tipo == "encuestas") {
         (pc_ytot_ch >= lp830_2021) & (pc_ytot_ch < lp420_2021*4) ~ "vulnerable_lp2021_CPI",  # vulnerable
         (pc_ytot_ch >= lp420_2021*4) & (pc_ytot_ch < lp420_2021*20) ~ "middle_lp2021_CPI",  # middle class
         (pc_ytot_ch >= lp420_2021*20) ~ "rich_lp2021_CPI", 
+        TRUE ~ NA_character_), # rich,
+      extreme_poor_category_lp2021IMF_ICP = case_when(
+        (pc_ytot_ch < lp420_2021 ~ "extreme_poor_lp2021_CPI"),  # extreme poverty
+        (pc_ytot_ch >= lp420_2021)  ~ "non_extreme_poor_lp2021_CPI",  # poverty
         TRUE ~ NA_character_),
+      poor_category_lp2021IMF_ICP = case_when(
+        (pc_ytot_ch < lp830_2021) ~ "poor_lp2021_CPI",  # poverty
+        (pc_ytot_ch >= lp830_2021) ~ "non_poor_lp2021_CPI",  # vulnerable
+        TRUE ~ NA_character_), # rich,      
       area = case_when(
         zona_c == 1 ~ "urban", 
         zona_c == 0 ~ "rural", 
