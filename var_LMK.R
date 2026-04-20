@@ -129,6 +129,13 @@ if (tipo == "encuestas") {
   
   data_filt <- left_join(data_filt, povertyLinesUpdated, by = c("pais_c" = "isoalpha3","anio_c" = "year"))
   
+  # replace lp420_2021 with lp420_2021_old when lp420_2021 is.na
+  data_filt <- data_filt %>% 
+    mutate(
+      lp420_2021 = ifelse(is.na(lp420_2021),lp420_2021_old,lp420_2021),
+      lp830_2021 = ifelse(is.na(lp830_2021),lp830_2021_old,lp830_2021)
+  )
+  #data_filt$lp830_2021
   
   data_filt <- data_filt %>% 
     mutate(#1.1 Poblacion Total, en Edad de Trabajar - PET y economicamente activa PEA:
