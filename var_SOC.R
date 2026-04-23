@@ -185,13 +185,21 @@ if (tipo == "encuestas") {
         (pc_ytot_ch >= lp14_2017.y) & (pc_ytot_ch < lp81_2017.y) ~ "middle_lp2017_CPI",  # middle class
         (pc_ytot_ch >= lp81_2017.y) ~ "rich_lp2017_CPI", 
         TRUE ~ NA_character_),  # rich,      
-      income_category_lp2021Jillie = case_when(
-        (pc_ytot_ch < lp420_2021_old ~ "extreme_2021_old"),  # extreme poverty
-        (pc_ytot_ch >= lp420_2021_old) & (pc_ytot_ch < lp830_2021_old) ~ "poverty_2021_old",  # poverty
-        (pc_ytot_ch >= lp830_2021_old) & (pc_ytot_ch < lp420_2021_old*4) ~ "vulnerable_2021_old",  # vulnerable
-        (pc_ytot_ch >= lp420_2021_old*4) & (pc_ytot_ch < lp420_2021_old*20) ~ "middle_2021_old",  # middle class
-        (pc_ytot_ch >= lp420_2021_old*20) ~ "rich_2021_old", 
+      income_category_lp2017_CPI = case_when(
+        (pc_ytot_ch < lp365_2017.y ~ "extreme_lp2017_CPI"),  # extreme poverty
+        (pc_ytot_ch >= lp365_2017.y) & (pc_ytot_ch < lp685_2017.y) ~ "poverty_lp2017_CPI",  # poverty
+        (pc_ytot_ch >= lp685_2017.y) & (pc_ytot_ch < lp14_2017.y) ~ "vulnerable_lp2017_CPI",  # vulnerable
+        (pc_ytot_ch >= lp14_2017.y) & (pc_ytot_ch < lp81_2017.y) ~ "middle_lp2017_CPI",  # middle class
+        (pc_ytot_ch >= lp81_2017.y) ~ "rich_lp2017_CPI", 
+        TRUE ~ NA_character_),  # rich,           
+      extreme_poor_category_lp2017_CPI = case_when(
+        (pc_ytot_ch < lp365_2017.y ~ "extreme_poor_lp2017_CPI"),  # extreme poverty
+        (pc_ytot_ch >= lp365_2017.y) ~ "non_extreme_poor_lp2017_CPI", 
         TRUE ~ NA_character_), # rich,
+      poor_category_lp2017_CPI = case_when(
+        (pc_ytot_ch < lp685_2017.y ~ "poor_lp2017_CPI"),  # extreme poverty
+        (pc_ytot_ch >= lp685_2017.y) ~ "non_poor_lp2017_CPI", 
+        TRUE ~ NA_character_), # rich,      
       income_category_lp2021IMF_ICP = case_when(
         (pc_ytot_ch < lp420_2021 ~ "extreme_lp2021_CPI"),  # extreme poverty
         (pc_ytot_ch >= lp420_2021) & (pc_ytot_ch < lp830_2021) ~ "poverty_lp2021_CPI",  # poverty
