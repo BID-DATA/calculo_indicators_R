@@ -95,6 +95,10 @@ scl_pct <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
     data_aux <- data_aux %>% rename(poverty = extreme_poor_category_lp2021IMF_ICP)
   } else if('poor_category_lp2021IMF_ICP' %in% .group_vars){
     data_aux <- data_aux %>% rename(poverty = poor_category_lp2021IMF_ICP)
+  }    else if('poor_category_nationalPL' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = poor_category_nationalPL)
+  } else if('extreme_poor_category_nationalPL' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = extreme_poor_category_nationalPL)
   } 
   
   # Add disaggregation columns if not already present
@@ -190,6 +194,10 @@ scl_pctv2 <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
     data_aux <- data_aux %>% rename(poverty = extreme_poor_category_lp2021IMF_ICP)
   } else if('poor_category_lp2021IMF_ICP' %in% .group_vars){
     data_aux <- data_aux %>% rename(poverty = poor_category_lp2021IMF_ICP)
+  }   else if('poor_category_nationalPL' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = poor_category_nationalPL)
+  } else if('extreme_poor_category_nationalPL' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = extreme_poor_category_nationalPL)
   } 
   
   # Add disaggregation columns if not already present
@@ -283,6 +291,10 @@ scl_mean <- function(.data, .nombre, .mean_var, .condicion, .group_vars) {
     data_aux <- data_aux %>% rename(poverty = extreme_poor_category_lp2021IMF_ICP)
   } else if('poor_category_lp2021IMF_ICP' %in% .group_vars){
     data_aux <- data_aux %>% rename(poverty = poor_category_lp2021IMF_ICP)
+  }  else if('poor_category_nationalPL' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = poor_category_nationalPL)
+  } else if('extreme_poor_category_nationalPL' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = extreme_poor_category_nationalPL)
   } 
   
   # Add disaggregation columns if not already present
@@ -419,6 +431,10 @@ scl_gini <- function(.data, .nombre, .condicion1, .condicion2, .group_vars) {
     data_aux <- data_aux %>% rename(poverty = extreme_poor_category_lp2021IMF_ICP)
   } else if('poor_category_lp2021IMF_ICP' %in% .group_vars){
     data_aux <- data_aux %>% rename(poverty = poor_category_lp2021IMF_ICP)
+  }  else if('poor_category_nationalPL' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = poor_category_nationalPL)
+  } else if('extreme_poor_category_nationalPL' %in% .group_vars){
+    data_aux <- data_aux %>% rename(poverty = extreme_poor_category_nationalPL)
   } 
   
   # Add disaggregation columns if not already present
