@@ -206,7 +206,15 @@ if (tipo == "encuestas") {
       poor_category_lp2021IMF_ICP = case_when(
         (pc_ytot_ch < lp830_2021) ~ "poor_lp2021_CPI",  # poverty
         (pc_ytot_ch >= lp830_2021) ~ "non_poor_lp2021_CPI",  # vulnerable
-        TRUE ~ NA_character_), # rich,      
+        TRUE ~ NA_character_), # rich,
+      poor_category_nationalPL = case_when(
+        (pc_ytot_ch < ln_ci) ~ "poor_nationalPL",  # poverty
+        (pc_ytot_ch >= ln_ci) ~ "non_poor_nationalPL",  # vulnerable
+        TRUE ~ NA_character_), # rich,    
+      extreme_poor_category_nationalPL = case_when(
+        (pc_ytot_ch < lpe_ci) ~ "extreme_poor_nationalPL",  # poverty
+        (pc_ytot_ch >= lpe_ci) ~ "non_extreme_poor_nationalPL",  # vulnerable
+        TRUE ~ NA_character_), # rich,        
       area = case_when(
         zona_c == 1 ~ "urban", 
         zona_c == 0 ~ "rural", 
