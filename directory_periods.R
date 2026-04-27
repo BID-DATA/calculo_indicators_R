@@ -31,7 +31,7 @@ functionRoundAndSurvey <- function(pais, tipo, anio) {
       base <- paste("//sapidbshares.file.core.windows.net//idbrestrictedshares//SCL_DATAFILES_RESTRICTED//harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")
     }
     else {
-      base <- paste("Z://harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")  
+      base <- paste("//sapidbshares.file.core.windows.net//idbshares//SURVEYS//harmonized//",pais,"//",survey,"//data_arm//",pais,"_",anio,round,"_BID.dta",sep = "")  
     }
     # return database address
     return(base)
