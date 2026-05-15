@@ -11,8 +11,8 @@ library(multidplyr)
 library(matrixStats)
 library(reldist)
 
-pais<-"SLV"
-anio<-"2018"
+pais<-"BRA"
+anio<-"2011"
 
 # select between "censos"/"encuestas"
 tipo<-"encuestas"

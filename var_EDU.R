@@ -172,6 +172,16 @@ if (tipo == "censos") {
         TRUE ~ NA_character_
       ),
       
+      edad_escolar = case_when(edad_ci >= 4 & edad_ci <= 5 ~ "04_05",
+                               edad_ci >= 6 & edad_ci <= 11 ~ "06_11",
+                               edad_ci >= 12 & edad_ci <= 14 ~ "12_14",
+                               edad_ci >= 15 & edad_ci <= 17 ~ "15_17",
+                               edad_ci >= 18 & edad_ci <= 23 ~ "18_23",
+                               TRUE ~ NA_character_),
+      
+      edad_no_escolar = case_when(edad_ci >= 25 & edad_ci <= 34 ~ "25_34",
+                                  edad_ci >= 25 & edad_ci <= 64 ~ "25_64",
+                                  TRUE ~ NA_character_),
       # Años de educación
       anos_edu = case_when(
         aedu_ci == 0 ~ "anos_0",
@@ -407,6 +417,17 @@ if (tipo == "encuestas") {
                                     edad_ci >= 15 & edad_ci <= 17 ~ "age_15_17",
                                     edad_ci >= 18 & edad_ci <= 23 ~ "age_18_23",
                                     TRUE ~NA_character_),
+           
+           edad_escolar = case_when(edad_ci >= 4 & edad_ci <= 5 ~ "04_05",
+                                    edad_ci >= 6 & edad_ci <= 11 ~ "06_11",
+                                    edad_ci >= 12 & edad_ci <= 14 ~ "12_14",
+                                    edad_ci >= 15 & edad_ci <= 17 ~ "15_17",
+                                    edad_ci >= 18 & edad_ci <= 23 ~ "18_23",
+                                    TRUE ~ NA_character_),
+           
+           edad_no_escolar = case_when(edad_ci >= 25 & edad_ci <= 34 ~ "25_34",
+                                       edad_ci >= 25 & edad_ci <= 64 ~ "25_64",
+                                       TRUE ~ NA_character_),
            
            anos_edu = case_when(aedu_ci == 0 ~ "anos_0",
                                 aedu_ci >= 1 & aedu_ci <= 5 ~ "anos_1_5", 

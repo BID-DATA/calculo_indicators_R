@@ -7,7 +7,12 @@
   # code that returns the address of the survey
   source("directory_periods.R")
   message(paste("Loading database ",pais,": ", anio))
-  base <- functionRoundAndSurvey(pais,tipo,anio)
+  
+  if (exists("base_in_data_arm")) {
+    base <- base_in_data_arm
+  } else {
+    base <- functionRoundAndSurvey(pais,tipo,anio)
+  }
  
   
   if (tipo == "censos") {
