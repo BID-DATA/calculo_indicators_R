@@ -8,10 +8,18 @@
   source("directory_periods.R")
   message(paste("Loading database ",pais,": ", anio))
   
-  if (exists("base_in_data_arm")) {
-    base <- base_in_data_arm
-  } else {
-    base <- functionRoundAndSurvey(pais,tipo,anio)
+  if (tipo == "censos") {
+    if (exists("base_in_data_arm")) {
+      base <- base_in_data_arm
+    } else {
+      base <- functionRoundAndSurvey(pais, tipo, anio)
+    }
+  }
+
+  if (tipo == "encuestas") {
+    survey_name <- read.csv("Inputs/running_survey.csv") %>%
+      filter(Pais == pais, year == anio, availability == 1) %>%
+      pull(Encuesta)
   }
  
   
@@ -51,8 +59,17 @@ if (tipo == "encuestas") {
   
   # Get the names of the variables that need to be in the data
   required_vars <- unique(variables_encuestas$Variable)
-  # Read data
-  data_filt <- read_dta(base,col_select=any_of(required_vars))  
+  # Read data (from the per-country-year split of outdata.dta, see split_outdata_by_country_year.R)
+  split_dir <- "C:/Users/DCOR/Downloads/20260602_outdata/20260602_outdata_split/"
+  survey_file <- file.path(split_dir, paste0(pais, "_", anio, "_BID.rds"))
+
+  if (!file.exists(survey_file)) {
+    stop(paste0("No split survey file found for ", pais, " ", anio, " at ", survey_file))
+  }
+
+  data_filt <- readRDS(survey_file) %>%
+    dplyr::select(any_of(required_vars)) %>%
+    filter(pais_c == pais, anio_c == as.integer(anio))
   # Check which of the required variables are not in the data
   missing_vars <- setdiff(required_vars, colnames(data_filt))
   
@@ -74,7 +91,7 @@ message(paste("Loading intermediate variables ",pais,": ", anio))
 
 source("var_SOC.R")
 
-  
+  source("var_ANCHOR2024.R")
 
 # Remove data we do not need and free memory
   rm("variables_encuestas", "varlist_censos", "variables_censos", "required_vars","missing_vars")
@@ -95,11 +112,11 @@ if (tipo=="censos"){
   indicator_definitions <- read.csv("Inputs/idefCensos.csv")
 }
 # if needed you can filter here by theme
-num_cores <- detectCores() - 1
+num_cores <- 3  # reduced from detectCores()-1 so this repo can run concurrently alongside calculo_indicators_r_calibrated without oversubscribing the machine's 8 cores
 
 if (tipo=="censos"){
   indicator_definitions <- indicator_definitions %>% filter(includedInCensus==1)
-  
+
   ### adding disagregation
   if (geoLevel == "geolev1"){
     ### adding to disagregation column, geolevel1
@@ -167,7 +184,7 @@ data_total <- data_total %>%
                        geolev1 = ifelse(geolev1=="Total","country",geolev1),
                        # adding fuente
                        fuente = ifelse(tipo=="censos",paste(pais,"-IPUMS",sep = ""),
-                                       paste(pais,"-",str_extract(base, paste("(?<=",pais,"//).+(?=//data_arm)",sep = "")),sep = "")),
+                                       paste(pais,"-",survey_name,sep = "")),
                        quality_check = ""
                        ) %>% rename("idgeo"="geolev1")
  
