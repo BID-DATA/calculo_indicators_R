@@ -168,8 +168,7 @@ if (tipo == "encuestas") {
       ylab_ppp=ylab_ci/ppp_2011/ratio_cpi2011,
       ylab_ppp_2017=ylab_ci/ppp_2017/ratio_cpi2017,
       #1.6.3 Ingreso horario en la actividad principal USD
-      #hwage_ci = ifelse(condocup_ci==1,ylmpri_ci/(horaspri_ci*4.3),NA_real_),
-      hwage_ci = ifelse(condocup_ci==1 & horaspri_ci>0,ylmpri_ci/(horaspri_ci*4.3),NA_real_),
+      hwage_ci = ifelse(condocup_ci==1,ylmpri_ci/(horaspri_ci*4.3),NA_real_),
       hwage_ppp=hwage_ci/ppp_2011/ratio_cpi2011,
       hwage_ppp_2017=hwage_ci/ppp_2017/ratio_cpi2017,
       #1.6.4 Ingreso por pensión contributiva USD
